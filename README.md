@@ -54,10 +54,11 @@ The `config.json` file is used to customize the behavior of the application. It 
 
 - **leagues**: A list of league identifiers for which data will be fetched and analyzed. You can add or remove leagues as needed.
 - **default_days**: The default number of days for which data will be fetched if no `<no_days>` argument is provided when running the program.
+- **number_of_matches**: The maximum number of matches to display, sorted by predictability. If set to a negative value, all matches will be displayed.
 
 ### Example
 
-To modify the leagues or default days, edit the `config.json` file:
+To modify the leagues, default days, or number of matches, edit the `config.json` file:
 
 ```json
 {
@@ -67,7 +68,8 @@ To modify the leagues or default days, edit the `config.json` file:
         "soccer_italy_serie_a",
         "soccer_germany_bundesliga"
     ],
-    "default_days": 1
+    "default_days": 1,
+    "number_of_matches": 5
 }
 ```
 
