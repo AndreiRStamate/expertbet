@@ -181,15 +181,15 @@ def compute_predictability(match):
 
 def decide_action(match, threshold=1.0):
     """
-    Decide acțiunea recomandată ("pariaza" sau "abtine-te") pe baza scorului de predictabilitate.
-    Dacă scorul este mai mic sau egal cu threshold, se recomandă "pariaza".
+    Decide acțiunea recomandată ("Pariu sigur" sau "Pariu riscant") pe baza scorului de predictabilitate.
+    Dacă scorul este mai mic sau egal cu threshold, se recomandă "Pariu sigur".
     """
     predictability_score = match.get('predictability', float('inf'))
-    action = "pariaza" if predictability_score <= threshold else "abtine-te"
+    action = "Pariu sigur" if predictability_score <= threshold else "Pariu riscant"
     logger.debug("Decizie pentru %s vs %s: %s", match['team1'], match['team2'], action)
     return action
 
-def get_predictable_matches(nr_zile=1, top_n=10, leagues=None):
+def get_predictable_matches(nr_zile=1, top_n=-1, leagues=None):
     """
     Obține meciurile de fotbal ale zilei (folosind cache-ul dacă este cazul), calculează scorul de predictabilitate
     pentru fiecare și sortează lista astfel încât cele mai predictibile meciuri să fie primele.
@@ -199,12 +199,48 @@ def get_predictable_matches(nr_zile=1, top_n=10, leagues=None):
         match['predictability'] = compute_predictability(match)
     sorted_matches = sorted(matches, key=lambda m: m['predictability'])
     logger.info("Meciuri sortate după predictabilitate: %s", sorted_matches)
+    if top_n == -1:
+        top_n = len(sorted_matches)
     return sorted_matches[:top_n]
+
+def print_match(match, action):
+    # Convertim data din format ISO într-un format prietenos
+    try:
+        commence_dt = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00"))
+        commence_str = commence_dt.strftime("%d-%m-%Y %H:%M")
+    except Exception as e:
+        commence_str = match['commence_time']
+
+    # Setări pentru afișare
+    total_width = 60        # Lățimea totală a liniei, inclusiv marginile
+    content_width = total_width - 2  # Spațiul interior dintre marginile '|'
+    label_width = 20        # Lățime rezervată pentru etichete
+    value_width = content_width - label_width  # Spațiul rezervat pentru valori
+
+    border = "+" + "-" * (total_width - 2) + "+"
+
+    def format_row(label, value):
+        # Convertim valoarea la string
+        str_value = str(value)
+        # Dacă valoarea este prea lungă, o trunchiem și adăugăm "..."
+        if len(str_value) > value_width:
+            str_value = str_value[:value_width-3] + "..."
+        # Formatează rândul cu eticheta aliniată la stânga și valoarea la dreapta
+        return f"|{label:<{label_width}}{str_value:>{value_width}}|"
+
+    print(border)
+    print(format_row("Liga:", match['league']))
+    print(format_row("Echipe:", f"{match['team1']} vs {match['team2']}"))
+    print(format_row("Data & Oră:", commence_str))
+    print(format_row("Predictabilitate:", f"{match['predictability']:.2f}"))
+    print(format_row("Evaluare:", action.upper()))
+    print(border)
 
 def main():
     config = load_config()
     leagues = config.get("leagues", [])
     default_days = config.get("default_days", 1)
+    number_of_matches = config.get("number_of_matches", 5)
     
     # Preluăm argumentul din linia de comandă pentru nr_zile (dacă este specificat)
     nr_zile = default_days
@@ -215,27 +251,16 @@ def main():
             logger.error("Argumentul pentru nr_zile nu este valid. Folosește un număr întreg.")
             return
 
-    predictable_matches = get_predictable_matches(nr_zile=nr_zile, leagues=leagues)
+    predictable_matches = get_predictable_matches(nr_zile=nr_zile, top_n=number_of_matches, leagues=leagues)
     if not predictable_matches:
         logger.info("Nu s-au găsit meciuri pentru intervalul specificat sau datele nu sunt disponibile.")
         return
     
     print(f"Meciuri de fotbal în următoarele {nr_zile} zile, din ligile: {', '.join(leagues)}")
-    print("Sortate după predictabilitate:\n")
+    print("Sortate după gradul de încredere:\n")
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
-        try:
-            commence_dt = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00"))
-            commence_str = commence_dt.strftime("%d-%m-%Y %H:%M")
-        except Exception as e:
-            commence_str = match['commence_time']
-        print("-" * 50)
-        print(f"Liga:         {match['league']}")
-        print(f"Echipe:       {match['team1']} vs {match['team2']}")
-        print(f"Data & Oră:   {commence_str}")
-        print(f"Predictabilitate: {match['predictability']:.2f}")
-        print(f"Recomandare:  {action.upper()}")
-        print("-" * 50 + "\n")
+        print_match(match, action)
 
 if __name__ == '__main__':
     main()
