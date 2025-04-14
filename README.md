@@ -75,6 +75,14 @@ To modify the leagues, default days, or number of matches, edit the `config.json
 
 The application will automatically use these settings when executed.
 
+## Template for Tip Files
+
+The application uses a template file (`gpt-generated-5x3.txt`) to generate detailed betting tips for matches with high predictability (action: "Pariu sigur"). This template contains placeholders that are dynamically replaced with match-specific details, such as team names, league name, and match date and time.
+
+### Template File Location
+
+The template file is located in the `prompt-examples` folder
+
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
