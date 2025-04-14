@@ -8,7 +8,7 @@ import logging
 import sys
 from dotenv import load_dotenv
 
-# Configurare logare 
+# Configurare logare: scrie mesajele în fișierul log_file.log
 logging.basicConfig(
     filename='log_file.log',
     filemode='a',
@@ -17,9 +17,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-load_dotenv()  # Încarcă variabilele de mediu
+load_dotenv()  # Încarcă variabilele de mediu din .env
 
-API_RESPONSE_FILE = "api_response.json"
+# Folderul unde vor fi salvate fișierele de cache
+CACHE_FOLDER = "cache"
+
+# Asigură-te că folderul de cache există
+os.makedirs(CACHE_FOLDER, exist_ok=True)
+
 CONFIG_FILE = "config.json"
 
 def load_config():
@@ -34,10 +39,11 @@ def load_config():
 
 def get_cached_api_response(league):
     """
-    Verifică dacă există cache pentru o anumită ligă (fișier separat de exemplu: api_response_{league}.json)
-    și dacă este valabil pe baza datei de modificare.
+    Verifică dacă există cache pentru liga specificată.
+    Cache-ul este salvat în fișierul: cache/api_response_{league}.json
+    și este considerat valid dacă data ultimei modificări este egală cu ziua curentă.
     """
-    cache_file = f"api_response_{league}.json"
+    cache_file = os.path.join(CACHE_FOLDER, f"api_response_{league}.json")
     if os.path.exists(cache_file):
         mod_time = datetime.date.fromtimestamp(os.path.getmtime(cache_file))
         today = datetime.date.today()
@@ -53,11 +59,12 @@ def get_cached_api_response(league):
 
 def fetch_api_response(league):
     """
-    Face apelul către API pentru liga specificată și salvează răspunsul în cache specific.
+    Face apelul către API-ul TheOddsAPI pentru liga specificată și salvează răspunsul brut
+    în cache (fișierul cache/api_response_{league}.json).
     """
     api_key = os.getenv("THE_ODDS_API_KEY")
     if not api_key:
-        logger.error("Cheia API lipsește. Setează THE_ODDS_API_KEY în fișierul .env")
+        logger.error("Cheia API lipsește. Setează THE_ODDS_API_KEY în .env")
         return None
     
     url = f"https://api.the-odds-api.com/v4/sports/{league}/odds/?apiKey={api_key}&regions=eu&markets=h2h&oddsFormat=decimal"
@@ -65,7 +72,6 @@ def fetch_api_response(league):
         response = requests.get(url)
         response.raise_for_status()
     except requests.HTTPError as http_err:
-        # Dacă error-ul HTTP este 404, înseamnă că liga nu este disponibilă
         if response.status_code == 404:
             logger.error("Liga %s nu este disponibilă (404).", league)
             return None
@@ -82,7 +88,7 @@ def fetch_api_response(league):
         logger.error("Eroare la decodificarea JSON pentru liga %s: %s", league, e)
         return None
 
-    cache_file = f"api_response_{league}.json"
+    cache_file = os.path.join(CACHE_FOLDER, f"api_response_{league}.json")
     try:
         with open(cache_file, 'w') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
@@ -93,18 +99,17 @@ def fetch_api_response(league):
 
 def get_matches_for_days(nr_zile=1, leagues=None):
     """
-    Pentru fiecare ligă specificată, extrage meciurile din intervalul de zile,
-    combinând rezultatele într-o listă comună.
+    Pentru fiecare ligă specificată, extrage meciurile din intervalul de zile [today, today + nr_zile)
+    și combină rezultatele într-o listă comună.
     """
     if leagues is None:
-        leagues = []  # sau poți returna []
+        leagues = []
     
     today = datetime.date.today()
     end_date = today + datetime.timedelta(days=nr_zile)
     combined_matches = []
     
     for league in leagues:
-        # Încercăm să obținem datele din cache sau API pentru fiecare ligă.
         data = get_cached_api_response(league)
         if data is None:
             data = fetch_api_response(league)
