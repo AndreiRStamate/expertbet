@@ -3,8 +3,9 @@
       "soccer_epl",
       "soccer_spain_la_liga",
       "soccer_italy_serie_a",
-      "soccer_germany_bundesliga"
+      "soccer_germany_bundesliga",
+      "soccer_uefa_champs_league"
     ],
     "default_days": 1,
-    "number_of_matches": 10
+    "number_of_matches": 5
 }
