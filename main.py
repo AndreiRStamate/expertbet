@@ -7,6 +7,7 @@ import json
 import logging
 import sys
 from dotenv import load_dotenv
+import stat  # Add this import at the top of the file
 
 # Configurare logare: scrie mesajele în fișierul log_file.log
 logging.basicConfig(
@@ -323,7 +324,9 @@ def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-
     try:
         with open(filepath, 'w') as f:
             f.write(filled_content.strip())
-        logger.info("Tip file created: %s", filepath)
+        # Set the file to read-only
+        os.chmod(filepath, stat.S_IREAD)
+        logger.info("Tip file created and set to read-only: %s", filepath)
     except Exception as e:
         logger.error("Failed to create tip file for %s vs %s: %s", match['team1'], match['team2'], e)
 
