@@ -1,0 +1,20 @@
+Analyze the following football match and provide a detailed prediction focused on betting opportunities:
+
+Match: {team1} vs {team2}
+Competition: {sport_title}
+Date & Time: {commence_time}
+
+Please consider the following:
+•	Recent form (last 5 matches)
+•	League standings
+•	Injuries/suspensions
+•	Weather forecast
+•	Referee
+•	Head-to-head record
+•	Tactical styles
+•	Odds movement if relevant
+•	Possible fatigue
+
+At the end, provide:
+•	5 likely bets with brief explanations
+•	3 high-probability bets with strong justifications
