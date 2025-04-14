@@ -3,6 +3,7 @@ import datetime
 import os
 import json
 import logging
+import sys
 from dotenv import load_dotenv  # Import load_dotenv
 
 # Configurare logare
@@ -66,14 +67,15 @@ def fetch_api_response():
     
     return data
 
-def get_todays_matches():
+def get_matches_for_days(nr_zile=1):
     """
-    Extrage meciurile de fotbal ale zilei folosind cache-ul din api_response.json.
-    Dacă cache-ul nu există sau nu este valid (nu are data curentă),
-    face apelul către API și salvează răspunsul în fișierul de cache.
-    Apoi procesează conținutul și returnează meciurile filtrate pe ziua curentă.
+    Extrage meciurile de fotbal pentru un interval de zile, începând cu ziua curentă
+    și incluzând următoarele (nr_zile - 1) zile.
+    
+    Se folosește cache-ul din api_response.json dacă acesta este actual.
     """
     today = datetime.date.today()
+    end_date = today + datetime.timedelta(days=nr_zile)
     
     data = get_cached_api_response()
     if data is None:
@@ -82,14 +84,12 @@ def get_todays_matches():
             logger.error("Nu s-au putut obține date de la API.")
             return []
     
-    # Procesăm datele pentru a extrage meciurile de astăzi.
-    matches_today = []
+    matches_interval = []
     
     for match in data:
         # Obținem denumirile echipelor: încercăm mai întâi cheia "teams".
         teams = match.get("teams")
         if not teams:
-            # Dacă nu există "teams", încercăm cheile alternative "home_team" și "away_team".
             team1 = match.get("home_team")
             team2 = match.get("away_team")
             if not team1 or not team2:
@@ -99,8 +99,13 @@ def get_todays_matches():
             team1, team2 = teams[0], teams[1]
         
         # Convertim ora de începere într-un obiect date.
-        commence_time = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00")).date()
-        if commence_time == today:
+        try:
+            commence_time = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00")).date()
+        except Exception as e:
+            logger.error("Eroare la conversia datei pentru meci: %s", e)
+            continue
+        # Dacă meciul se desfășoară în intervalul specificat, îl adăugăm.
+        if today <= commence_time < end_date:
             odds_team1 = []
             odds_team2 = []
             # Parcurgem fiecare bookmaker pentru a obține cotele din piața "h2h"
@@ -125,12 +130,12 @@ def get_todays_matches():
                     },
                     "commence_time": match["commence_time"]
                 }
-                matches_today.append(match_entry)
+                matches_interval.append(match_entry)
                 logger.debug("Meci adăugat: %s", match_entry)
             else:
                 logger.warning("Meci ignorat; cotele nu sunt complete pentru: %s vs %s", team1, team2)
     
-    return matches_today
+    return matches_interval
 
 def compute_predictability(match):
     """
@@ -158,12 +163,12 @@ def decide_action(match, threshold=1.0):
     logger.debug("Decizie pentru %s vs %s: %s", match['team1'], match['team2'], action)
     return action
 
-def get_predictable_matches(top_n=10):
+def get_predictable_matches(nr_zile=1, top_n=10):
     """
     Obține meciurile de fotbal ale zilei (folosind cache-ul dacă este cazul), calculează scorul de predictabilitate
     pentru fiecare și sortează lista astfel încât cele mai predictibile meciuri să fie primele.
     """
-    matches = get_todays_matches()
+    matches = get_matches_for_days(nr_zile)
     for match in matches:
         match['predictability'] = compute_predictability(match)
     sorted_matches = sorted(matches, key=lambda m: m['predictability'])
@@ -171,15 +176,25 @@ def get_predictable_matches(top_n=10):
     return sorted_matches[:top_n]
 
 def main():
-    predictable_matches = get_predictable_matches()
+    # Preluăm argumentul din linia de comandă pentru nr_zile; implicit 1 dacă nu este specificat.
+    nr_zile = 1
+    if len(sys.argv) > 1:
+        try:
+            nr_zile = int(sys.argv[1])
+        except ValueError:
+            logger.error("Argumentul nu este valid. Folosește un număr întreg pentru nr_zile.")
+            return
+    
+    predictable_matches = get_predictable_matches(nr_zile=nr_zile)
     if not predictable_matches:
-        logger.info("Nu s-au găsit meciuri pentru ziua de azi sau datele nu sunt disponibile.")
+        logger.info("Nu s-au găsit meciuri pentru intervalul specificat sau datele nu sunt disponibile.")
         return
     
-    print("Meciuri de fotbal ale zilei (date reale), sortate după predictabilitate:")
+    print(f"Meciuri de fotbal în următoarele {nr_zile} zile, sortate după predictabilitate:")
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
-        print(f"{match['team1']} vs {match['team2']} - Cotele: {match['odds']} - Scor predictabilitate: {match['predictability']:.2f} -> Recomandare: {action}")
+        print(f"{match['team1']} vs {match['team2']} - Cotele: {match['odds']} - "
+              f"Data: {match['commence_time']} - Scor predictabilitate: {match['predictability']:.2f} -> Recomandare: {action}")
 
 if __name__ == '__main__':
     main()
