@@ -7,8 +7,12 @@ import sys
 from dotenv import load_dotenv  # Import load_dotenv
 
 # Configurare logare
-logging.basicConfig(level=logging.DEBUG, 
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    filename='log_file.log',  # toate mesajele vor fi scrise aici
+    filemode='a',             # a = append, w = overwrite
+    level=logging.DEBUG,      # nivelul poate fi ajustat: DEBUG, INFO, etc.
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 load_dotenv()  # Load environment variables from .env file
@@ -190,11 +194,22 @@ def main():
         logger.info("Nu s-au găsit meciuri pentru intervalul specificat sau datele nu sunt disponibile.")
         return
     
-    print(f"Meciuri de fotbal în următoarele {nr_zile} zile, sortate după predictabilitate:")
+    print(f"Meciuri de fotbal în următoarele {nr_zile} zile, sortate după predictabilitate:\n")
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
-        print(f"{match['team1']} vs {match['team2']} - Cotele: {match['odds']} - "
-              f"Data: {match['commence_time']} - Scor predictabilitate: {match['predictability']:.2f} -> Recomandare: {action}")
+        # Convertim ora de începere într-un format mai prietenos, ex: "14-04-2025 19:00"
+        try:
+            commence_dt = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00"))
+            commence_str = commence_dt.strftime("%d-%m-%Y %H:%M")
+        except Exception as e:
+            commence_str = match['commence_time']
+        
+        print("-" * 50)
+        print(f"Echipe:       {match['team1']} vs {match['team2']}")
+        print(f"Data & Oră:   {commence_str}")
+        print(f"Predictabilitate: {match['predictability']:.2f}")
+        print(f"Recomandare:  {action.upper()}")
+        print("-" * 50 + "\n")
 
 if __name__ == '__main__':
     main()
