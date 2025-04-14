@@ -1,0 +1,20 @@
+Analizează următorul meci de fotbal și oferă o predicție detaliată axată pe oportunități de pariere:
+
+Meci: {team1} vs {team2}
+Competiție: {sport_title}
+Data și ora: {commence_time}
+
+Te rog să iei în considerare următoarele aspecte:
+•	Forma recentă (ultimele 5 meciuri)
+•	Clasamentul în ligă
+•	Accidentări/suspendări
+•	Prognoza meteo
+•	Arbitru
+•	Istoricul întâlnirilor directe
+•	Stiluri tactice
+•	Evoluția cotelor, dacă este relevantă
+•	Posibila oboseală acumulată
+
+La final, oferă:
+•	5 pariuri probabile cu explicații scurte
+•	3 pariuri cu probabilitate mare și justificări solide
