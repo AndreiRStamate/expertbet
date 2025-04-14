@@ -12,37 +12,35 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()  # Load environment variables from .env file
 
-CACHE_FILE = "cache_matches.json"
-API_RESPONSE_FILE = "api_response.json"  # Noul fișier în care vom salva răspunsul API
+API_RESPONSE_FILE = "api_response.json"
 
-def get_todays_matches():
+def get_cached_api_response():
     """
-    Extrage meciurile de fotbal ale zilei din API-ul TheOddsAPI,
-    utilizând un mecanism de cache pentru a reduce numărul de apeluri.
+    Verifică dacă fișierul api_response.json există și dacă data ultimei modificări
+    este egală cu ziua curentă. Dacă da, încarcă și returnează conținutul JSON.
+    """
+    if os.path.exists(API_RESPONSE_FILE):
+        # Obținem data ultimei modificări a fișierului
+        mod_time = datetime.date.fromtimestamp(os.path.getmtime(API_RESPONSE_FILE))
+        today = datetime.date.today()
+        if mod_time == today:
+            try:
+                with open(API_RESPONSE_FILE, 'r') as f:
+                    data = json.load(f)
+                logger.info("Se folosește cache din %s", API_RESPONSE_FILE)
+                return data
+            except Exception as e:
+                logger.error("Eroare la citirea fișierului %s: %s", API_RESPONSE_FILE, e)
+    return None
 
-    Verifică dacă pentru un eveniment există cheia 'teams'. Dacă nu, încearcă
-    să extragă echipele din 'home_team' și 'away_team'. Dacă nici acestea nu
-    sunt disponibile, meciul este ignorat.
+def fetch_api_response():
     """
-    today = datetime.date.today()
-    today_str = today.strftime("%Y-%m-%d")
-    
-    # Încercăm să folosim datele din cache dacă există și sunt pentru ziua curentă.
-    if os.path.exists(CACHE_FILE):
-        try:
-            with open(CACHE_FILE, 'r') as f:
-                cache_data = json.load(f)
-            if cache_data.get("date") == today_str:
-                logger.info("Utilizare cache pentru meciurile din ziua de azi.")
-                return cache_data.get("matches", [])
-        except Exception as e:
-            logger.error("Eroare la citirea fișierului de cache: %s", e)
-    
-    # Retrieve API key from environment variable
+    Face apelul către API-ul TheOddsAPI și salvează răspunsul brut în fișierul api_response.json.
+    """
     api_key = os.getenv("THE_ODDS_API_KEY")
     if not api_key:
-        logger.error("API key is missing. Please set the THE_ODDS_API_KEY environment variable.")
-        return []
+        logger.error("API key is missing. Please set THE_ODDS_API_KEY environment variable.")
+        return None
     
     url = f"https://api.the-odds-api.com/v4/sports/soccer_epl/odds/?apiKey={api_key}&regions=eu&markets=h2h&oddsFormat=decimal"
     
@@ -51,19 +49,40 @@ def get_todays_matches():
         response.raise_for_status()
     except requests.RequestException as e:
         logger.error("A apărut o eroare la obținerea datelor din API: %s", e)
-        return []
+        return None
+
+    try:
+        data = response.json()
+    except Exception as e:
+        logger.error("Eroare la decodificarea răspunsului JSON: %s", e)
+        return None
     
-    # Obținem răspunsul API și salvăm conținutul brut într-un fișier nou
-    data = response.json()
     try:
         with open(API_RESPONSE_FILE, 'w') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-        logger.info("Răspunsul API a fost salvat în fișierul %s", API_RESPONSE_FILE)
+        logger.info("Răspunsul API a fost salvat în %s", API_RESPONSE_FILE)
     except Exception as e:
-        logger.error("Eroare la scrierea răspunsului API în %s: %s", API_RESPONSE_FILE, e)
-
-    logger.debug("API response data: %s", json.dumps(data, indent=2, ensure_ascii=False))
+        logger.error("Eroare la scrierea în %s: %s", API_RESPONSE_FILE, e)
     
+    return data
+
+def get_todays_matches():
+    """
+    Extrage meciurile de fotbal ale zilei folosind cache-ul din api_response.json.
+    Dacă cache-ul nu există sau nu este valid (nu are data curentă),
+    face apelul către API și salvează răspunsul în fișierul de cache.
+    Apoi procesează conținutul și returnează meciurile filtrate pe ziua curentă.
+    """
+    today = datetime.date.today()
+    
+    data = get_cached_api_response()
+    if data is None:
+        data = fetch_api_response()
+        if data is None:
+            logger.error("Nu s-au putut obține date de la API.")
+            return []
+    
+    # Procesăm datele pentru a extrage meciurile de astăzi.
     matches_today = []
     
     for match in data:
@@ -74,7 +93,7 @@ def get_todays_matches():
             team1 = match.get("home_team")
             team2 = match.get("away_team")
             if not team1 or not team2:
-                logger.warning("Meci ignorat; nu s-au găsit informații despre echipe: %s", match)
+                logger.warning("Meci ignorat; informații despre echipe lipsesc: %s", match)
                 continue
         else:
             team1, team2 = teams[0], teams[1]
@@ -109,16 +128,7 @@ def get_todays_matches():
                 matches_today.append(match_entry)
                 logger.debug("Meci adăugat: %s", match_entry)
             else:
-                logger.warning("Meci ignorat; cotele nu sunt complete pentru meci: %s vs %s", team1, team2)
-    
-    # Salvăm rezultatele în cache împreună cu data curentă.
-    cache_data = {"date": today_str, "matches": matches_today}
-    try:
-        with open(CACHE_FILE, 'w') as f:
-            json.dump(cache_data, f)
-        logger.info("Cache salvat cu succes.")
-    except Exception as e:
-        logger.error("Eroare la scrierea în cache: %s", e)
+                logger.warning("Meci ignorat; cotele nu sunt complete pentru: %s vs %s", team1, team2)
     
     return matches_today
 
@@ -163,7 +173,7 @@ def get_predictable_matches(top_n=10):
 def main():
     predictable_matches = get_predictable_matches()
     if not predictable_matches:
-        logger.info("Nu s-au găsit meciuri pentru ziua de azi sau API-ul nu a returnat date.")
+        logger.info("Nu s-au găsit meciuri pentru ziua de azi sau datele nu sunt disponibile.")
         return
     
     print("Meciuri de fotbal ale zilei (date reale), sortate după predictabilitate:")
