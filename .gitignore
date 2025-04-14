@@ -2,3 +2,5 @@
 api_response_*.json
 log_file.log
 venv
+.venv
+ponturi

@@ -236,6 +236,46 @@ def print_match(match, action):
     print(format_row("Evaluare:", action.upper()))
     print(border)
 
+def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-5x3.txt"):
+    """
+    Creates a tip file for a match with the action 'pariu sigur'.
+    The file is generated based on a template file with placeholders replaced by match details.
+    """
+    if action.lower() != "pariu sigur":
+        return
+
+    # Ensure the 'ponturi' folder exists
+    ponturi_folder = "ponturi"
+    os.makedirs(ponturi_folder, exist_ok=True)
+
+    # Read the template content from the file
+    try:
+        with open(template_file, 'r') as f:
+            template_content = f.read()
+    except Exception as e:
+        logger.error("Failed to read template file %s: %s", template_file, e)
+        return
+
+    # Replace placeholders in the template with match details
+    filled_content = template_content.format(
+        team1=match['team1'],
+        team2=match['team2'],
+        sport_title=match['league'],
+        commence_time=match['commence_time']
+    )
+
+    # Generate a unique filename for the tip
+    filename = f"tip_{match['team1'].replace(' ', '_')}_vs_{match['team2'].replace(' ', '_')}.txt"
+    filepath = os.path.join(ponturi_folder, filename)
+
+    # Write the filled content to the file
+    try:
+        with open(filepath, 'w') as f:
+            f.write(filled_content.strip())
+        logger.info("Tip file created: %s", filepath)
+    except Exception as e:
+        logger.error("Failed to create tip file for %s vs %s: %s", match['team1'], match['team2'], e)
+
 def main():
     config = load_config()
     leagues = config.get("leagues", [])
@@ -261,6 +301,7 @@ def main():
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
         print_match(match, action)
+        create_tip_file(match, action)
 
 if __name__ == '__main__':
     main()
