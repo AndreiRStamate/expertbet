@@ -33,6 +33,43 @@ Example:
 python3 main.py 7
 ```
 
+## Configuration
+
+The `config.json` file is used to customize the behavior of the application. It includes the following settings:
+
+- **leagues**: A list of league identifiers for which data will be fetched and analyzed. You can add or remove leagues as needed.
+- **default_days**: The default number of days for which data will be fetched if no `<no_days>` argument is provided when running the program.
+
+### Example
+
+To modify the leagues or default days, edit the `config.json` file:
+
+```json
+{
+    "leagues": [
+        "soccer_epl",
+        "soccer_spain_la_liga",
+        "soccer_italy_serie_a",
+        "soccer_germany_bundesliga"
+    ],
+    "default_days": 1
+}
+```
+
+For instance, to add the French Ligue 1 (I won't include the farmers league by default), update the `leagues` array:
+
+```json
+"leagues": [
+    "soccer_epl",
+    "soccer_spain_la_liga",
+    "soccer_italy_serie_a",
+    "soccer_germany_bundesliga",
+    "soccer_france_ligue_1"
+]
+```
+
+The application will automatically use these settings when executed.
+
 ## Contributing
 
 Contributions are welcome! Please follow these steps:

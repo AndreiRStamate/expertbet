@@ -6,142 +6,157 @@ import os
 import json
 import logging
 import sys
-from dotenv import load_dotenv  # Import load_dotenv
+from dotenv import load_dotenv
 
-# Configurare logare
+# Configurare logare 
 logging.basicConfig(
-    filename='log_file.log',  # toate mesajele vor fi scrise aici
-    filemode='a',             # a = append, w = overwrite
-    level=logging.DEBUG,      # nivelul poate fi ajustat: DEBUG, INFO, etc.
+    filename='log_file.log',
+    filemode='a',
+    level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()  # Încarcă variabilele de mediu
 
 API_RESPONSE_FILE = "api_response.json"
+CONFIG_FILE = "config.json"
 
-def get_cached_api_response():
+def load_config():
+    try:
+        with open(CONFIG_FILE, 'r') as f:
+            config = json.load(f)
+        logger.info("Configurație încărcată din %s", CONFIG_FILE)
+        return config
+    except Exception as e:
+        logger.error("Eroare la încărcarea configurației: %s", e)
+        return {}
+
+def get_cached_api_response(league):
     """
-    Verifică dacă fișierul api_response.json există și dacă data ultimei modificări
-    este egală cu ziua curentă. Dacă da, încarcă și returnează conținutul JSON.
+    Verifică dacă există cache pentru o anumită ligă (fișier separat de exemplu: api_response_{league}.json)
+    și dacă este valabil pe baza datei de modificare.
     """
-    if os.path.exists(API_RESPONSE_FILE):
-        # Obținem data ultimei modificări a fișierului
-        mod_time = datetime.date.fromtimestamp(os.path.getmtime(API_RESPONSE_FILE))
+    cache_file = f"api_response_{league}.json"
+    if os.path.exists(cache_file):
+        mod_time = datetime.date.fromtimestamp(os.path.getmtime(cache_file))
         today = datetime.date.today()
         if mod_time == today:
             try:
-                with open(API_RESPONSE_FILE, 'r') as f:
+                with open(cache_file, 'r') as f:
                     data = json.load(f)
-                logger.info("Se folosește cache din %s", API_RESPONSE_FILE)
+                logger.info("Cache pentru liga %s folosit din %s", league, cache_file)
                 return data
             except Exception as e:
-                logger.error("Eroare la citirea fișierului %s: %s", API_RESPONSE_FILE, e)
+                logger.error("Eroare la citirea cache-ului din %s: %s", cache_file, e)
     return None
 
-def fetch_api_response():
+def fetch_api_response(league):
     """
-    Face apelul către API-ul TheOddsAPI și salvează răspunsul brut în fișierul api_response.json.
+    Face apelul către API pentru liga specificată și salvează răspunsul în cache specific.
     """
     api_key = os.getenv("THE_ODDS_API_KEY")
     if not api_key:
-        logger.error("API key is missing. Please set THE_ODDS_API_KEY environment variable.")
+        logger.error("Cheia API lipsește. Setează THE_ODDS_API_KEY în fișierul .env")
         return None
     
-    url = f"https://api.the-odds-api.com/v4/sports/soccer_epl/odds/?apiKey={api_key}&regions=eu&markets=h2h&oddsFormat=decimal"
-    
+    url = f"https://api.the-odds-api.com/v4/sports/{league}/odds/?apiKey={api_key}&regions=eu&markets=h2h&oddsFormat=decimal"
     try:
         response = requests.get(url)
         response.raise_for_status()
+    except requests.HTTPError as http_err:
+        # Dacă error-ul HTTP este 404, înseamnă că liga nu este disponibilă
+        if response.status_code == 404:
+            logger.error("Liga %s nu este disponibilă (404).", league)
+            return None
+        else:
+            logger.error("Eroare API pentru liga %s: %s", league, http_err)
+            return None
     except requests.RequestException as e:
-        logger.error("A apărut o eroare la obținerea datelor din API: %s", e)
+        logger.error("Eroare API pentru liga %s: %s", league, e)
         return None
 
     try:
         data = response.json()
     except Exception as e:
-        logger.error("Eroare la decodificarea răspunsului JSON: %s", e)
+        logger.error("Eroare la decodificarea JSON pentru liga %s: %s", league, e)
         return None
-    
+
+    cache_file = f"api_response_{league}.json"
     try:
-        with open(API_RESPONSE_FILE, 'w') as f:
+        with open(cache_file, 'w') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-        logger.info("Răspunsul API a fost salvat în %s", API_RESPONSE_FILE)
+        logger.info("Răspuns API pentru liga %s salvat în %s", league, cache_file)
     except Exception as e:
-        logger.error("Eroare la scrierea în %s: %s", API_RESPONSE_FILE, e)
-    
+        logger.error("Eroare la scrierea cache-ului pentru liga %s: %s", league, e)
     return data
 
-def get_matches_for_days(nr_zile=1):
+def get_matches_for_days(nr_zile=1, leagues=None):
     """
-    Extrage meciurile de fotbal pentru un interval de zile, începând cu ziua curentă
-    și incluzând următoarele (nr_zile - 1) zile.
+    Pentru fiecare ligă specificată, extrage meciurile din intervalul de zile,
+    combinând rezultatele într-o listă comună.
+    """
+    if leagues is None:
+        leagues = []  # sau poți returna []
     
-    Se folosește cache-ul din api_response.json dacă acesta este actual.
-    """
     today = datetime.date.today()
     end_date = today + datetime.timedelta(days=nr_zile)
+    combined_matches = []
     
-    data = get_cached_api_response()
-    if data is None:
-        data = fetch_api_response()
+    for league in leagues:
+        # Încercăm să obținem datele din cache sau API pentru fiecare ligă.
+        data = get_cached_api_response(league)
         if data is None:
-            logger.error("Nu s-au putut obține date de la API.")
-            return []
-    
-    matches_interval = []
-    
-    for match in data:
-        # Obținem denumirile echipelor: încercăm mai întâi cheia "teams".
-        teams = match.get("teams")
-        if not teams:
-            team1 = match.get("home_team")
-            team2 = match.get("away_team")
-            if not team1 or not team2:
-                logger.warning("Meci ignorat; informații despre echipe lipsesc: %s", match)
-                continue
-        else:
-            team1, team2 = teams[0], teams[1]
-        
-        # Convertim ora de începere într-un obiect date.
-        try:
-            commence_time = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00")).date()
-        except Exception as e:
-            logger.error("Eroare la conversia datei pentru meci: %s", e)
+            data = fetch_api_response(league)
+        if data is None:
             continue
-        # Dacă meciul se desfășoară în intervalul specificat, îl adăugăm.
-        if today <= commence_time < end_date:
-            odds_team1 = []
-            odds_team2 = []
-            # Parcurgem fiecare bookmaker pentru a obține cotele din piața "h2h"
-            for bookmaker in match.get("bookmakers", []):
-                for market in bookmaker.get("markets", []):
-                    if market.get("key") == "h2h":
-                        for outcome in market.get("outcomes", []):
-                            if outcome.get("name") == team1:
-                                odds_team1.append(outcome.get("price"))
-                            elif outcome.get("name") == team2:
-                                odds_team2.append(outcome.get("price"))
-            # Dacă avem cotele pentru ambele echipe, alegem cele mai avantajoase (minime)
-            if odds_team1 and odds_team2:
-                best_odds_team1 = min(odds_team1)
-                best_odds_team2 = min(odds_team2)
-                match_entry = {
-                    "team1": team1,
-                    "team2": team2,
-                    "odds": {
-                        team1: best_odds_team1,
-                        team2: best_odds_team2
-                    },
-                    "commence_time": match["commence_time"]
-                }
-                matches_interval.append(match_entry)
-                logger.debug("Meci adăugat: %s", match_entry)
+
+        for match in data:
+            teams = match.get("teams")
+            if not teams:
+                team1 = match.get("home_team")
+                team2 = match.get("away_team")
+                if not team1 or not team2:
+                    logger.warning("Meci ignorat; informații despre echipe lipsesc: %s", match)
+                    continue
             else:
-                logger.warning("Meci ignorat; cotele nu sunt complete pentru: %s vs %s", team1, team2)
-    
-    return matches_interval
+                team1, team2 = teams[0], teams[1]
+            
+            try:
+                commence_time = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00")).date()
+            except Exception as e:
+                logger.error("Eroare la conversia datei: %s", e)
+                continue
+
+            if today <= commence_time < end_date:
+                odds_team1 = []
+                odds_team2 = []
+                for bookmaker in match.get("bookmakers", []):
+                    for market in bookmaker.get("markets", []):
+                        if market.get("key") == "h2h":
+                            for outcome in market.get("outcomes", []):
+                                if outcome.get("name") == team1:
+                                    odds_team1.append(outcome.get("price"))
+                                elif outcome.get("name") == team2:
+                                    odds_team2.append(outcome.get("price"))
+                if odds_team1 and odds_team2:
+                    best_odds_team1 = min(odds_team1)
+                    best_odds_team2 = min(odds_team2)
+                    match_entry = {
+                        "league": league,
+                        "team1": team1,
+                        "team2": team2,
+                        "odds": {
+                            team1: best_odds_team1,
+                            team2: best_odds_team2
+                        },
+                        "commence_time": match["commence_time"]
+                    }
+                    combined_matches.append(match_entry)
+                    logger.debug("Meci adăugat: %s", match_entry)
+                else:
+                    logger.warning("Meci ignorat; cotele nu sunt complete pentru: %s vs %s", team1, team2)
+    return combined_matches
 
 def compute_predictability(match):
     """
@@ -169,12 +184,12 @@ def decide_action(match, threshold=1.0):
     logger.debug("Decizie pentru %s vs %s: %s", match['team1'], match['team2'], action)
     return action
 
-def get_predictable_matches(nr_zile=1, top_n=10):
+def get_predictable_matches(nr_zile=1, top_n=10, leagues=None):
     """
     Obține meciurile de fotbal ale zilei (folosind cache-ul dacă este cazul), calculează scorul de predictabilitate
     pentru fiecare și sortează lista astfel încât cele mai predictibile meciuri să fie primele.
     """
-    matches = get_matches_for_days(nr_zile)
+    matches = get_matches_for_days(nr_zile, leagues)
     for match in matches:
         match['predictability'] = compute_predictability(match)
     sorted_matches = sorted(matches, key=lambda m: m['predictability'])
@@ -182,31 +197,35 @@ def get_predictable_matches(nr_zile=1, top_n=10):
     return sorted_matches[:top_n]
 
 def main():
-    # Preluăm argumentul din linia de comandă pentru nr_zile; implicit 1 dacă nu este specificat.
-    nr_zile = 1
+    config = load_config()
+    leagues = config.get("leagues", [])
+    default_days = config.get("default_days", 1)
+    
+    # Preluăm argumentul din linia de comandă pentru nr_zile (dacă este specificat)
+    nr_zile = default_days
     if len(sys.argv) > 1:
         try:
             nr_zile = int(sys.argv[1])
         except ValueError:
-            logger.error("Argumentul nu este valid. Folosește un număr întreg pentru nr_zile.")
+            logger.error("Argumentul pentru nr_zile nu este valid. Folosește un număr întreg.")
             return
-    
-    predictable_matches = get_predictable_matches(nr_zile=nr_zile)
+
+    predictable_matches = get_predictable_matches(nr_zile=nr_zile, leagues=leagues)
     if not predictable_matches:
         logger.info("Nu s-au găsit meciuri pentru intervalul specificat sau datele nu sunt disponibile.")
         return
     
-    print(f"Meciuri de fotbal în următoarele {nr_zile} zile, sortate după predictabilitate:\n")
+    print(f"Meciuri de fotbal în următoarele {nr_zile} zile, din ligile: {', '.join(leagues)}")
+    print("Sortate după predictabilitate:\n")
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
-        # Convertim ora de începere într-un format mai prietenos, ex: "14-04-2025 19:00"
         try:
             commence_dt = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00"))
             commence_str = commence_dt.strftime("%d-%m-%Y %H:%M")
         except Exception as e:
             commence_str = match['commence_time']
-        
         print("-" * 50)
+        print(f"Liga:         {match['league']}")
         print(f"Echipe:       {match['team1']} vs {match['team2']}")
         print(f"Data & Oră:   {commence_str}")
         print(f"Predictabilitate: {match['predictability']:.2f}")

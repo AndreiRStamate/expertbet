@@ -1,0 +1,9 @@
+{
+    "leagues": [
+      "soccer_epl",
+      "soccer_spain_la_liga",
+      "soccer_italy_serie_a",
+      "soccer_germany_bundesliga"
+    ],
+    "default_days": 1
+}
