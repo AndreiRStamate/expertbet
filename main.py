@@ -1,3 +1,5 @@
+# Released under the MIT-0 License. Do whatever you want. No warranty.
+
 import requests
 import datetime
 import os
