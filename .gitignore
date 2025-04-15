@@ -4,3 +4,4 @@ log_file.log
 venv
 .venv
 ponturi
+output_matches.txt

@@ -252,7 +252,10 @@ def get_predictable_matches(nr_zile=1, top_n=-1, leagues=None):
         top_n = len(sorted_matches)
     return sorted_matches[:top_n]
 
-def print_match(match, action):
+def print_match(match, action, output_file=None):
+    """
+    Prints match details to the terminal and optionally writes them to an output file.
+    """
     # Convertim data din format ISO într-un format prietenos
     try:
         commence_dt = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00"))
@@ -277,13 +280,28 @@ def print_match(match, action):
         # Formatează rândul cu eticheta aliniată la stânga și valoarea la dreapta
         return f"|{label:<{label_width}}{str_value:>{value_width}}|"
 
-    print(border)
-    print(format_row("Liga:", match['league']))
-    print(format_row("Echipe:", f"{match['team1']} vs {match['team2']}"))
-    print(format_row("Data & Oră:", commence_str))
-    print(format_row("Predictabilitate:", f"{match['predictability']:.2f}"))
-    print(format_row("Evaluare:", action.upper()))
-    print(border)
+    # Build the match details as a string
+    match_details = "\n".join([
+        border,
+        format_row("Liga:", match['league']),
+        format_row("Echipe:", f"{match['team1']} vs {match['team2']}"),
+        format_row("Data & Oră:", commence_str),
+        format_row("Predictabilitate:", f"{match['predictability']:.2f}"),
+        format_row("Evaluare:", action.upper()),
+        border
+    ])
+
+    # Print to terminal
+    print(match_details)
+
+    # Write to the output file
+    if output_file:
+        try:
+            with open(output_file, "a") as f:
+                f.write(match_details + "\n\n")  # Add a newline between matches
+            logger.info("Match details written to %s", output_file)
+        except Exception as e:
+            logger.error("Failed to write match details to %s: %s", output_file, e)
 
 def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-5x3.txt"):
     """

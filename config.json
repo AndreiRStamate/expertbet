@@ -47,5 +47,5 @@
     "soccer_usa_mls"
   ],
   "default_days": 1,
-  "number_of_matches": 5
+  "number_of_matches": -1
 }
