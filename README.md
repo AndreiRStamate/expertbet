@@ -83,6 +83,23 @@ The application uses a template file (`gpt-generated-5x3.txt`) to generate detai
 
 The template file is located in the `prompt-examples` folder
 
+## Output File for Match Details
+
+The application allows you to print match details to the terminal and optionally write them to an output file. This is controlled by the `output_file` parameter in the `print_match` function.
+
+### How It Works
+
+- If an `output_file` is specified, the match details will be appended to the specified file.
+- If no `output_file` is provided, the match details will only be printed to the terminal.
+
+### Example Usage
+
+#### Printing Only to the Terminal
+If you do not specify an output file, the match details will be displayed in the terminal:
+```python
+print_match(match, action)
+```
+
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
