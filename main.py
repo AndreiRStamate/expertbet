@@ -90,10 +90,14 @@ def load_config():
 def get_cached_api_response(league):
     """
     Verifică dacă există cache pentru liga specificată.
-    Cache-ul este salvat în fișierul: cache/api_response_{league}.json
+    Cache-ul este salvat în fișierul: cache/sport/api_response_{league}.json
     și este considerat valid dacă data ultimei modificări este egală cu ziua curentă.
     """
-    cache_file = os.path.join(CACHE_FOLDER, f"api_response_{league}.json")
+    sport_folder = "soccer" if "soccer" in league else "basketball"
+    cache_folder = os.path.join(CACHE_FOLDER, sport_folder)
+    os.makedirs(cache_folder, exist_ok=True)  # Ensure the sport-specific folder exists
+
+    cache_file = os.path.join(cache_folder, f"api_response_{league}.json")
     if os.path.exists(cache_file):
         mod_time = datetime.date.fromtimestamp(os.path.getmtime(cache_file))
         today = datetime.date.today()
@@ -110,7 +114,7 @@ def get_cached_api_response(league):
 def fetch_api_response(league):
     """
     Face apelul către API-ul TheOddsAPI pentru liga specificată și salvează răspunsul brut
-    în cache (fișierul cache/api_response_{league}.json).
+    în cache (fișierul cache/sport/api_response_{league}.json).
     """
     api_key = os.getenv("THE_ODDS_API_KEY")
     if not api_key:
@@ -138,7 +142,11 @@ def fetch_api_response(league):
         logger.error("Eroare la decodificarea JSON pentru liga %s: %s", league, e)
         return None
 
-    cache_file = os.path.join(CACHE_FOLDER, f"api_response_{league}.json")
+    sport_folder = "soccer" if "soccer" in league else "basketball"
+    cache_folder = os.path.join(CACHE_FOLDER, sport_folder)
+    os.makedirs(cache_folder, exist_ok=True)  # Ensure the sport-specific folder exists
+
+    cache_file = os.path.join(cache_folder, f"api_response_{league}.json")
     try:
         with open(cache_file, 'w') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
