@@ -8,6 +8,7 @@ import logging
 import sys
 from dotenv import load_dotenv
 import stat  # Add this import at the top of the file
+import argparse  # Add this import for argument parsing
 
 # Configurare logare: scrie mesajele în fișierul log_file.log
 logging.basicConfig(
@@ -349,27 +350,37 @@ def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-
         logger.error("Failed to create tip file for %s vs %s: %s", match['team1'], match['team2'], e)
 
 def main():
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description="Predict football or basketball matches.")
+    parser.add_argument("--football", action="store_true", help="Parse only football leagues.")
+    parser.add_argument("--basketball", action="store_true", help="Parse only basketball leagues.")
+    parser.add_argument("--days", type=int, default=None, help="Number of days to fetch matches for.")
+    args = parser.parse_args()
+
     config = load_config()
-    leagues = config.get("leagues", [])
-    default_days = config.get("default_days", 1)
+
+    # Determine which leagues to parse based on the arguments
+    if args.football and args.basketball:
+        logger.error("Cannot specify both --football and --basketball at the same time.")
+        return
+    elif args.football:
+        leagues = config.get("football", [])
+    elif args.basketball:
+        leagues = config.get("basketball", [])
+    else:
+        leagues = config.get("football", []) + config.get("basketball", [])
+
+    # Use the specified number of days or the default from the config
+    nr_zile = args.days if args.days is not None else config.get("default_days", 1)
     number_of_matches = config.get("number_of_matches", 5)
-    
-    # Preluăm argumentul din linia de comandă pentru nr_zile (dacă este specificat)
-    nr_zile = default_days
-    if len(sys.argv) > 1:
-        try:
-            nr_zile = int(sys.argv[1])
-        except ValueError:
-            logger.error("Argumentul pentru nr_zile nu este valid. Folosește un număr întreg.")
-            return
 
     predictable_matches = get_predictable_matches(nr_zile=nr_zile, top_n=number_of_matches, leagues=leagues)
     if not predictable_matches:
-        logger.info("Nu s-au găsit meciuri pentru intervalul specificat sau datele nu sunt disponibile.")
+        logger.info("No matches found for the specified interval or data is unavailable.")
         return
-    
-    print(f"Meciuri de fotbal în următoarele {nr_zile} zile, din ligile: {', '.join(leagues)}")
-    print("Sortate după gradul de încredere:\n")
+
+    print(f"Matches in the next {nr_zile} days from leagues: {', '.join(leagues)}")
+    print("Sorted by confidence level:\n")
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
         print_match(match, action)

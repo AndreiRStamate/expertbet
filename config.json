@@ -1,5 +1,5 @@
 {
-  "leagues": [
+  "football": [
     "soccer_argentina_primera_division",
     "soccer_australia_aleague",
     "soccer_austria_bundesliga",
@@ -45,6 +45,11 @@
     "soccer_uefa_europa_league",
     "soccer_uefa_nations_league",
     "soccer_usa_mls"
+  ],
+  "basketball": [
+    "basketball_euroleague",
+    "basketball_nba",
+    "basketball_nba_championship_winner"
   ],
   "default_days": 1,
   "number_of_matches": -1
