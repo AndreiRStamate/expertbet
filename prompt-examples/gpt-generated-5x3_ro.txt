@@ -1,4 +1,4 @@
-Analizează următorul meci de fotbal și oferă o predicție detaliată axată pe oportunități de pariere:
+Analizează următorul meci și oferă o predicție detaliată axată pe oportunități de pariere:
 
 Meci: {team1} vs {team2}
 Competiție: {sport_title}

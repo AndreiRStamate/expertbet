@@ -1,4 +1,4 @@
-Analyze the following football match and provide a detailed prediction focused on betting opportunities:
+Analyze the following match and provide a detailed prediction focused on betting opportunities:
 
 Match: {team1} vs {team2}
 Competition: {sport_title}
