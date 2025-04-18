@@ -51,6 +51,14 @@
     "basketball_nba",
     "basketball_nba_championship_winner"
   ],
+  "hockey": [
+    "icehockey_ahl",
+    "icehockey_liiga",
+    "icehockey_nhl",
+    "icehockey_nhl_championship_winner",
+    "icehockey_sweden_allsvenskan",
+    "icehockey_sweden_hockey_league"
+  ],
   "default_days": 1,
   "number_of_matches": -1
 }

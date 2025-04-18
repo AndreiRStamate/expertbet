@@ -77,7 +77,13 @@ LEAGUE_NAMES = {
     "soccer_usa_mls": "USA Major League Soccer",
     "basketball_euroleague":"Basketball Euroleague",
     "basketball_nba":"NBA",
-    "basketball_nba_championship_winner":"NBA Championship Winner"
+    "basketball_nba_championship_winner":"NBA Championship Winner",
+    "icehockey_ahl": "American Hockey League",
+    "icehockey_liiga": "Finnish SM League",
+    "icehockey_nhl": "US Ice Hockey",
+    "icehockey_nhl_championship_winner": "NHL Championship Winner",
+    "icehockey_sweden_allsvenskan": "HockeyAllsvenskan",
+    "icehockey_sweden_hockey_league": "SHL"
 }
 
 def load_config():
@@ -96,7 +102,16 @@ def get_cached_api_response(league):
     Cache-ul este salvat în fișierul: cache/sport/api_response_{league}.json
     și este considerat valid dacă data ultimei modificări este egală cu ziua curentă.
     """
-    sport_folder = "soccer" if "soccer" in league else "basketball"
+    if "soccer" in league:
+        sport_folder = "soccer"
+    elif "basketball" in league:
+        sport_folder = "basketball"
+    elif "icehockey" in league:
+        sport_folder = "hockey"
+    else:
+        logger.error("Sport necunoscut pentru liga %s", league)
+        return None
+
     cache_folder = os.path.join(CACHE_FOLDER, sport_folder)
     os.makedirs(cache_folder, exist_ok=True)  # Ensure the sport-specific folder exists
 
@@ -145,7 +160,16 @@ def fetch_api_response(league):
         logger.error("Eroare la decodificarea JSON pentru liga %s: %s", league, e)
         return None
 
-    sport_folder = "soccer" if "soccer" in league else "basketball"
+    if "soccer" in league:
+        sport_folder = "soccer"
+    elif "basketball" in league:
+        sport_folder = "basketball"
+    elif "icehockey" in league:
+        sport_folder = "hockey"
+    else:
+        logger.error("Sport necunoscut pentru liga %s", league)
+        return None
+
     cache_folder = os.path.join(CACHE_FOLDER, sport_folder)
     os.makedirs(cache_folder, exist_ok=True)  # Ensure the sport-specific folder exists
 
@@ -346,8 +370,15 @@ def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-
         commence_time=match['commence_time']
     )
 
+    # Sanitize team names for the file name
+    def sanitize_filename(name):
+        return name.replace("/", "_").replace("\\", "_").replace(":", "_").replace("*", "_").replace("?", "_").replace("\"", "_").replace("<", "_").replace(">", "_").replace("|", "_")
+
+    sanitized_team1 = sanitize_filename(match['team1'])
+    sanitized_team2 = sanitize_filename(match['team2'])
+
     # Generate a unique filename for the tip
-    filename = f"tip_{match['team1'].replace(' ', '_')}_vs_{match['team2'].replace(' ', '_')}.txt"
+    filename = f"tip_{sanitized_team1}_vs_{sanitized_team2}.txt"
     filepath = os.path.join(ponturi_folder, filename)
 
     # Write the filled content to the file
@@ -362,24 +393,27 @@ def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-
 
 def main():
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Predict football or basketball matches.")
+    parser = argparse.ArgumentParser(description="Predict football, basketball, or hockey matches.")
     parser.add_argument("--football", action="store_true", help="Parse only football leagues.")
     parser.add_argument("--basketball", action="store_true", help="Parse only basketball leagues.")
+    parser.add_argument("--hockey", action="store_true", help="Parse only hockey leagues.")
     parser.add_argument("--days", type=int, default=None, help="Number of days to fetch matches for.")
     args = parser.parse_args()
 
     config = load_config()
 
     # Determine which leagues to parse based on the arguments
-    if args.football and args.basketball:
-        logger.error("Cannot specify both --football and --basketball at the same time.")
+    if sum([args.football, args.basketball, args.hockey]) > 1:
+        logger.error("Cannot specify multiple sports at the same time.")
         return
     elif args.football:
         leagues = config.get("football", [])
     elif args.basketball:
         leagues = config.get("basketball", [])
+    elif args.hockey:
+        leagues = config.get("hockey", [])
     else:
-        leagues = config.get("football", []) + config.get("basketball", [])
+        leagues = config.get("football", []) + config.get("basketball", []) + config.get("hockey", [])
 
     # Use the specified number of days or the default from the config
     nr_zile = args.days if args.days is not None else config.get("default_days", 1)
