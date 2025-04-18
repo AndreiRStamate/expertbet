@@ -74,7 +74,10 @@ LEAGUE_NAMES = {
     "soccer_uefa_europa_conference_league": "UEFA Europa Conference League",
     "soccer_uefa_europa_league": "UEFA Europa League",
     "soccer_uefa_nations_league": "UEFA Nations League",
-    "soccer_usa_mls": "USA Major League Soccer"
+    "soccer_usa_mls": "USA Major League Soccer",
+    "basketball_euroleague":"Basketball Euroleague",
+    "basketball_nba":"NBA",
+    "basketball_nba_championship_winner":"NBA Championship Winner"
 }
 
 def load_config():
