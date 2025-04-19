@@ -48,6 +48,8 @@ def get_cached_api_response(league):
         sport_folder = "basketball"
     elif "icehockey" in league:
         sport_folder = "hockey"
+    elif "cricket" in league:
+        sport_folder = "cricket"
     else:
         logger.error("Sport necunoscut pentru liga %s", league)
         return None
@@ -124,6 +126,8 @@ def fetch_api_response(league):
         sport_folder = "basketball"
     elif "icehockey" in league:
         sport_folder = "hockey"
+    elif "cricket" in league:
+        sport_folder = "cricket"
     else:
         logger.error("Sport necunoscut pentru liga %s", league)
         return None
@@ -359,17 +363,18 @@ def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-
 
 def main():
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Predict football, basketball, or hockey matches.")
+    parser = argparse.ArgumentParser(description="Predict football, basketball, hockey, or cricket matches.")
     parser.add_argument("--football", action="store_true", help="Parse only football leagues.")
     parser.add_argument("--basketball", action="store_true", help="Parse only basketball leagues.")
     parser.add_argument("--hockey", action="store_true", help="Parse only hockey leagues.")
+    parser.add_argument("--cricket", action="store_true", help="Parse only cricket leagues.")
     parser.add_argument("--days", type=int, default=None, help="Number of days to fetch matches for.")
     args = parser.parse_args()
 
     config = load_config()
 
     # Determine which leagues to parse based on the arguments
-    if sum([args.football, args.basketball, args.hockey]) > 1:
+    if sum([args.football, args.basketball, args.hockey, args.cricket]) > 1:
         logger.error("Cannot specify multiple sports at the same time.")
         return
     elif args.football:
@@ -378,8 +383,10 @@ def main():
         leagues = config.get("basketball", [])
     elif args.hockey:
         leagues = config.get("hockey", [])
+    elif args.cricket:
+        leagues = config.get("cricket", [])
     else:
-        leagues = config.get("football", []) + config.get("basketball", []) + config.get("hockey", [])
+        leagues = config.get("football", []) + config.get("basketball", []) + config.get("hockey", []) + config.get("cricket", [])
 
     # Use the specified number of days or the default from the config
     nr_zile = args.days if args.days is not None else config.get("default_days", 1)

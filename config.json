@@ -59,6 +59,12 @@
     "icehockey_sweden_allsvenskan",
     "icehockey_sweden_hockey_league"
   ],
+  "cricket": [
+    "cricket_international_t20",
+    "cricket_ipl",
+    "cricket_psl",
+    "cricket_test_match"
+  ],
   "default_days": 1,
   "number_of_matches": -1
 }
