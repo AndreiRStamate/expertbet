@@ -5,10 +5,10 @@ import datetime
 import os
 import json
 import logging
-import sys
 from dotenv import load_dotenv
-import stat  # Add this import at the top of the file
-import argparse  # Add this import for argument parsing
+import stat
+import argparse
+from constants import *
 
 # Configurare logare: scrie mesajele în fișierul log_file.log
 logging.basicConfig(
@@ -22,69 +22,9 @@ logger = logging.getLogger(__name__)
 load_dotenv()  # Încarcă variabilele de mediu din .env
 
 # Folderul unde vor fi salvate fișierele de cache
-CACHE_FOLDER = "cache"
 
 # Asigură-te că folderul de cache există
 os.makedirs(CACHE_FOLDER, exist_ok=True)
-
-CONFIG_FILE = "config.json"
-
-LEAGUE_NAMES = {
-    "soccer_argentina_primera_division": "Argentina Primera Division",
-    "soccer_australia_aleague": "Australia A-League",
-    "soccer_austria_bundesliga": "Austria Bundesliga",
-    "soccer_belgium_first_div": "Belgium First Division",
-    "soccer_brazil_campeonato": "Brazil Campeonato",
-    "soccer_brazil_serie_b": "Brazil Serie B",
-    "soccer_chile_campeonato": "Chile Campeonato",
-    "soccer_china_superleague": "China Super League",
-    "soccer_conmebol_copa_libertadores": "CONMEBOL Copa Libertadores",
-    "soccer_conmebol_copa_sudamericana": "CONMEBOL Copa Sudamericana",
-    "soccer_denmark_superliga": "Denmark Superliga",
-    "soccer_efl_champ": "EFL Championship",
-    "soccer_england_league1": "England League One",
-    "soccer_england_league2": "England League Two",
-    "soccer_epl": "English Premier League",
-    "soccer_fa_cup": "FA Cup",
-    "soccer_finland_veikkausliiga": "Finland Veikkausliiga",
-    "soccer_france_ligue_one": "France Ligue 1",
-    "soccer_france_ligue_two": "France Ligue 2",
-    "soccer_germany_bundesliga": "Germany Bundesliga",
-    "soccer_germany_bundesliga2": "Germany Bundesliga 2",
-    "soccer_germany_liga3": "Germany Liga 3",
-    "soccer_greece_super_league": "Greece Super League",
-    "soccer_italy_serie_a": "Italy Serie A",
-    "soccer_italy_serie_b": "Italy Serie B",
-    "soccer_japan_j_league": "Japan J-League",
-    "soccer_korea_kleague1": "Korea K-League 1",
-    "soccer_league_of_ireland": "League of Ireland",
-    "soccer_mexico_ligamx": "Mexico Liga MX",
-    "soccer_netherlands_eredivisie": "Netherlands Eredivisie",
-    "soccer_norway_eliteserien": "Norway Eliteserien",
-    "soccer_poland_ekstraklasa": "Poland Ekstraklasa",
-    "soccer_portugal_primeira_liga": "Portugal Primeira Liga",
-    "soccer_spain_la_liga": "La Liga",
-    "soccer_spain_segunda_division": "Spain Segunda Division",
-    "soccer_sweden_allsvenskan": "Sweden Allsvenskan",
-    "soccer_sweden_superettan": "Sweden Superettan",
-    "soccer_switzerland_superleague": "Switzerland Super League",
-    "soccer_turkey_super_league": "Turkey Super League",
-    "soccer_uefa_champs_league": "UEFA Champions League",
-    "soccer_uefa_champs_league_women": "UEFA Champions League Women",
-    "soccer_uefa_europa_conference_league": "UEFA Europa Conference League",
-    "soccer_uefa_europa_league": "UEFA Europa League",
-    "soccer_uefa_nations_league": "UEFA Nations League",
-    "soccer_usa_mls": "USA Major League Soccer",
-    "basketball_euroleague":"Basketball Euroleague",
-    "basketball_nba":"NBA",
-    "basketball_nba_championship_winner":"NBA Championship Winner",
-    "icehockey_ahl": "American Hockey League",
-    "icehockey_liiga": "Finnish SM League",
-    "icehockey_nhl": "US Ice Hockey",
-    "icehockey_nhl_championship_winner": "NHL Championship Winner",
-    "icehockey_sweden_allsvenskan": "HockeyAllsvenskan",
-    "icehockey_sweden_hockey_league": "SHL"
-}
 
 def load_config():
     try:
@@ -129,6 +69,24 @@ def get_cached_api_response(league):
                 logger.error("Eroare la citirea cache-ului din %s: %s", cache_file, e)
     return None
 
+# Function to load JSON data from a file
+def load_json(file_path):
+    try:
+        with open(file_path, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []  # Return an empty list if the file doesn't exist
+    except Exception as e:
+        logger.error("Eroare la citirea fișierului JSON %s: %s", file_path, e)
+        return []
+
+# Function to merge two JSON datasets
+def merge_json(old_data, new_data):
+    merged_data = {entry["id"]: entry for entry in old_data}  # Use old data as base
+    for entry in new_data:
+        merged_data[entry["id"]] = entry  # Overwrite or add new data
+    return list(merged_data.values())
+
 def fetch_api_response(league):
     """
     Face apelul către API-ul TheOddsAPI pentru liga specificată și salvează răspunsul brut
@@ -155,7 +113,7 @@ def fetch_api_response(league):
         return None
 
     try:
-        data = response.json()
+        new_data = response.json()
     except Exception as e:
         logger.error("Eroare la decodificarea JSON pentru liga %s: %s", league, e)
         return None
@@ -174,13 +132,21 @@ def fetch_api_response(league):
     os.makedirs(cache_folder, exist_ok=True)  # Ensure the sport-specific folder exists
 
     cache_file = os.path.join(cache_folder, f"api_response_{league}.json")
+    
+    # Load existing cache data
+    old_data = load_json(cache_file)
+
+    # Merge old and new data
+    merged_data = merge_json(old_data, new_data)
+
+    # Save the merged data back to the cache file
     try:
         with open(cache_file, 'w') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        logger.info("Răspuns API pentru liga %s salvat în %s", league, cache_file)
+            json.dump(merged_data, f, indent=2, ensure_ascii=False)
+        logger.info("Răspuns API pentru liga %s salvat și îmbinat în %s", league, cache_file)
     except Exception as e:
         logger.error("Eroare la scrierea cache-ului pentru liga %s: %s", league, e)
-    return data
+    return merged_data
 
 def get_matches_for_days(nr_zile=1, leagues=None):
     """
