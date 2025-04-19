@@ -96,11 +96,15 @@ def fetch_api_response_with_cache(league, cache_folder_base):
     if cached_data:
         return cached_data
 
+    cache_file = os.path.join(cache_folder, f"api_response_{league}.json")
+    # Load existing cache data
+    old_data = load_json(cache_file)
+
     # Fetch new data from the API
     new_data = fetch_api_response(league, api_key)
-    if not new_data:
-        return None
+
+    merged_data = merge_json(old_data, new_data) if old_data else new_data
 
     # Save the new data to cache
-    save_to_cache(league, new_data, cache_folder)
+    save_to_cache(league, merged_data, cache_folder)
     return new_data
