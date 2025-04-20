@@ -5,3 +5,5 @@ venv
 .venv
 ponturi
 output_matches.txt
+*.pyc
+output.txt

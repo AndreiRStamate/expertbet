@@ -1,3 +1,4 @@
+OUTPUT_FILE = "output.txt"
 CACHE_FOLDER = "cache"
 CONFIG_FILE = "config.json"
 LEAGUE_NAMES = {

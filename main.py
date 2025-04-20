@@ -60,7 +60,7 @@ def main():
     print("Sorted by confidence level:\n")
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
-        print_match(match, action)
+        print_match(match, action, OUTPUT_FILE)
         create_tip_file(match, action)
 
 if __name__ == '__main__':
