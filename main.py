@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import argparse
 from constants import *
 from utils.logging_config import setup_logging
-from utils.match_processing import get_predictable_matches, decide_action, print_match
+from utils.match_processing import compute_predictability, get_matches_sorted, decide_action, print_match
 from utils.file_operations import create_tip_file
 from utils.cache import fetch_api_response_with_cache, get_cached_api_response
 from utils.config import load_config
@@ -45,23 +45,43 @@ def main():
     nr_zile = args.days if args.days is not None else config.get("default_days", 1)
     number_of_matches = config.get("number_of_matches", 5)
 
-    predictable_matches = get_predictable_matches(
+    predictable_matches = get_matches_sorted(
+        by="predictability",
         nr_zile=nr_zile,
         top_n=number_of_matches,
         leagues=leagues,
-        fetch_api_response_with_cache=fetch_api_response_with_cache,
-        get_cached_api_response=get_cached_api_response
+        get_api_data=fetch_api_response_with_cache,
+        get_cached_data=get_cached_api_response
     )
     if not predictable_matches:
         logger.info("No matches found for the specified interval or data is unavailable.")
         return
 
-    print(f"Matches in the next {nr_zile} days from leagues: {', '.join(leagues)}")
-    print("Sorted by confidence level:\n")
+    sorted_matches = get_matches_sorted(
+        by="commence_time",
+        nr_zile=nr_zile,
+        top_n=number_of_matches,
+        leagues=leagues,
+        get_api_data=fetch_api_response_with_cache,
+        get_cached_data=get_cached_api_response
+    )
+    if not sorted_matches:
+        logger.info("No matches found for the specified interval or data is unavailable.")
+        return
+
+    with open(OUTPUT_FILE, "a") as f:
+        f.write(f"Matches in the next {nr_zile} days from leagues: {', '.join(leagues)}\n")
+        f.write("Sorted by confidence level:\n")
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
         print_match(match, action, OUTPUT_FILE)
         create_tip_file(match, action)
+
+    with open(OUTPUT_FILE, "a") as f:
+        f.write("\nSorted by time of play:\n")
+    for match in sorted_matches:
+        action = decide_action(match, threshold=1.0)
+        print_match(match, action, OUTPUT_FILE)
 
 if __name__ == '__main__':
     main()

@@ -3,7 +3,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def get_matches_for_days(nr_zile=1, leagues=None, fetch_api_response_with_cache=None, get_cached_api_response=None):
+def get_matches_for_days(nr_zile=1, leagues=None, get_api_data=None, get_cached_data=None):
     """
     Extracts matches for the specified leagues within the interval [today, today + nr_zile).
     Combines results into a single list.
@@ -16,9 +16,9 @@ def get_matches_for_days(nr_zile=1, leagues=None, fetch_api_response_with_cache=
     combined_matches = []
     
     for league in leagues:
-        data = get_cached_api_response(league)
+        data = get_cached_data(league)
         if data is None:
-            data = fetch_api_response_with_cache(league)
+            data = get_api_data(league)
         if data is None:
             continue
 
@@ -67,6 +67,8 @@ def get_matches_for_days(nr_zile=1, leagues=None, fetch_api_response_with_cache=
                     logger.debug("Match added: %s", match_entry)
                 else:
                     logger.warning("Match ignored; incomplete odds for: %s vs %s", team1, team2)
+    for match in combined_matches:
+        match['predictability'] = compute_predictability(match)
     return combined_matches
 
 def compute_predictability(match):
@@ -95,16 +97,14 @@ def decide_action(match, threshold=1.0):
     logger.debug("Decision for %s vs %s: %s", match['team1'], match['team2'], action)
     return action
 
-def get_predictable_matches(nr_zile=1, top_n=-1, leagues=None, fetch_api_response_with_cache=None, get_cached_api_response=None):
+def get_matches_sorted(by, nr_zile=1, top_n=-1, leagues=None, get_api_data=None, get_cached_data=None):
     """
-    Retrieves matches for the specified number of days, calculates predictability scores,
-    and sorts the matches so that the most predictable ones are first.
+    Retrieves matches for the specified number of days, sorts them by a specified attribute,
+    applies a mutation function if provided, and returns the top N matches.
     """
-    matches = get_matches_for_days(nr_zile, leagues, fetch_api_response_with_cache, get_cached_api_response)
-    for match in matches:
-        match['predictability'] = compute_predictability(match)
-    sorted_matches = sorted(matches, key=lambda m: m['predictability'])
-    logger.info("Matches sorted by predictability: %s", sorted_matches)
+    matches = get_matches_for_days(nr_zile, leagues, get_api_data, get_cached_data)
+    sorted_matches = sorted(matches, key=lambda m: m[by])
+    logger.info("Matches sorted by %s: %s", by, sorted_matches)
     if top_n == -1:
         top_n = len(sorted_matches)
     return sorted_matches[:top_n]
@@ -147,9 +147,6 @@ def print_match(match, action, output_file=None):
         format_row("Evaluare:", action.upper()),
         border
     ])
-
-    # Print to terminal
-    print(match_details)
 
     # Write to the output file
     if output_file:
