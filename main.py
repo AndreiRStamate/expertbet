@@ -11,7 +11,7 @@ from utils.cache import fetch_api_response_with_cache, get_cached_api_response
 from utils.config import load_config
 
 logger = setup_logging()
-load_dotenv()
+load_dotenv(override=True)
 
 def main():
     # Ensure the cache folder exists

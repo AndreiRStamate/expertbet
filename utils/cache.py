@@ -48,6 +48,7 @@ def load_json(file_path):
     """
     try:
         with open(file_path, "r") as file:
+            logging.debug("Loading JSON data from %s", file_path)
             return json.load(file)
     except FileNotFoundError:
         logger.warning("File not found: %s", file_path)
