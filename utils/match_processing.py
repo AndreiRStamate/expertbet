@@ -1,8 +1,6 @@
 import datetime
 import logging
 
-from constants import CACHE_FOLDER
-
 logger = logging.getLogger(__name__)
 
 def get_matches_for_days(nr_zile=1, leagues=None, fetch_api_response_with_cache=None, get_cached_api_response=None):
@@ -18,9 +16,9 @@ def get_matches_for_days(nr_zile=1, leagues=None, fetch_api_response_with_cache=
     combined_matches = []
     
     for league in leagues:
-        data = get_cached_api_response(league, cache_folder=CACHE_FOLDER)
+        data = get_cached_api_response(league)
         if data is None:
-            data = fetch_api_response_with_cache(league, CACHE_FOLDER)
+            data = fetch_api_response_with_cache(league)
         if data is None:
             continue
 

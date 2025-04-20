@@ -2,15 +2,24 @@ import os
 import json
 import datetime
 import logging
+from constants import CACHE_FOLDER
 from utils.api import fetch_api_response
 
 logger = logging.getLogger(__name__)
 
-def get_cached_api_response(league, cache_folder):
+def get_cached_api_response(league):
     """
     Retrieves cached API response for a specific league if the cache is valid.
     Cache is considered valid if the last modification date matches today's date.
     """
+
+    sport_folder = get_sport_folder(league)
+    if not sport_folder:
+        return None
+
+    cache_folder = os.path.join(CACHE_FOLDER, sport_folder)
+    os.makedirs(cache_folder, exist_ok=True)  # Ensure the sport-specific folder exists
+
     cache_file = os.path.join(cache_folder, f"api_response_{league}.json")
     if os.path.exists(cache_file):
         try:
@@ -67,7 +76,23 @@ def merge_json(old_data, new_data):
     logger.debug("Merged JSON data: %s", merged_data)
     return list(merged_data.values())
 
-def fetch_api_response_with_cache(league, cache_folder_base):
+def get_sport_folder(league):
+    """
+    Determines the sport folder based on the league name.
+    """
+    if "soccer" in league: # so stupid. . .
+        return "football"
+    elif "basketball" in league:
+        return "basketball"
+    elif "icehockey" in league:
+        return "hockey"
+    elif "cricket" in league:
+        return "cricket"
+    else:
+        logger.error("Unknown sport for league %s", league)
+        return None
+
+def fetch_api_response_with_cache(league):
     """
     Fetches API response for a league, using cache if available.
     """
@@ -77,23 +102,15 @@ def fetch_api_response_with_cache(league, cache_folder_base):
         return None
 
     # Determine the sport folder based on the league
-    if "soccer" in league:
-        sport_folder = "soccer"
-    elif "basketball" in league:
-        sport_folder = "basketball"
-    elif "icehockey" in league:
-        sport_folder = "hockey"
-    elif "cricket" in league:
-        sport_folder = "cricket"
-    else:
-        logger.error("Unknown sport for league %s", league)
+    sport_folder = get_sport_folder(league)
+    if not sport_folder:
         return None
 
-    cache_folder = os.path.join(cache_folder_base, sport_folder)
+    cache_folder = os.path.join(CACHE_FOLDER, sport_folder)
     os.makedirs(cache_folder, exist_ok=True)  # Ensure the sport-specific folder exists
 
     # Check cache first
-    cached_data = get_cached_api_response(league, cache_folder)
+    cached_data = get_cached_api_response(league)
     if cached_data:
         return cached_data
 
