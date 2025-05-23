@@ -71,8 +71,9 @@ def merge_json(old_data, new_data):
     Merges two JSON datasets. Entries in new_data overwrite those in old_data if IDs match.
     """
     merged_data = {entry["id"]: entry for entry in old_data}  # Use old data as base
-    for entry in new_data:
-        merged_data[entry["id"]] = entry  # Overwrite or add new data
+    if new_data:
+        for entry in new_data:
+            merged_data[entry["id"]] = entry  # Overwrite or add new data
     logger.debug("Merged JSON data: %s", merged_data)
     return list(merged_data.values())
 
