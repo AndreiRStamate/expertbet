@@ -55,9 +55,5 @@ LEAGUE_NAMES = {
     "icehockey_nhl": "US Ice Hockey",
     "icehockey_nhl_championship_winner": "NHL Championship Winner",
     "icehockey_sweden_allsvenskan": "HockeyAllsvenskan",
-    "icehockey_sweden_hockey_league": "SHL",
-    "cricket_international_t20": "International Twenty20",
-    "cricket_ipl": "Indian Premier League",
-    "cricket_psl": "Pakistan Super League",
-    "cricket_test_match": "Test Matches"
+    "icehockey_sweden_hockey_league": "SHL"
 }

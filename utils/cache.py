@@ -87,8 +87,6 @@ def get_sport_folder(league):
         return "basketball"
     elif "icehockey" in league:
         return "hockey"
-    elif "cricket" in league:
-        return "cricket"
     else:
         logger.error("Unknown sport for league %s", league)
         return None

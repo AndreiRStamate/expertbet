@@ -21,14 +21,13 @@ def main():
     parser.add_argument("--football", action="store_true", help="Parse only football leagues.")
     parser.add_argument("--basketball", action="store_true", help="Parse only basketball leagues.")
     parser.add_argument("--hockey", action="store_true", help="Parse only hockey leagues.")
-    parser.add_argument("--cricket", action="store_true", help="Parse only cricket leagues.")
     parser.add_argument("--days", type=int, default=None, help="Number of days to fetch matches for.")
     args = parser.parse_args()
 
     config = load_config(CONFIG_FILE)
 
     # Determine which leagues to parse
-    if sum([args.football, args.basketball, args.hockey, args.cricket]) > 1:
+    if sum([args.football, args.basketball, args.hockey]) > 1:
         logger.error("Cannot specify multiple sports at the same time.")
         return
     elif args.football:
@@ -37,10 +36,8 @@ def main():
         leagues = config.get("basketball", [])
     elif args.hockey:
         leagues = config.get("hockey", [])
-    elif args.cricket:
-        leagues = config.get("cricket", [])
     else:
-        leagues = config.get("football", []) + config.get("basketball", []) + config.get("hockey", []) + config.get("cricket", [])
+        leagues = config.get("football", []) + config.get("basketball", []) + config.get("hockey", [])
 
     nr_zile = args.days if args.days is not None else config.get("default_days", 1)
     number_of_matches = config.get("number_of_matches", 5)

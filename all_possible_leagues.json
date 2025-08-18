@@ -120,30 +120,6 @@
       "has_outrights":false
    },
    {
-      "key":"cricket_international_t20",
-      "group":"Cricket",
-      "title":"International Twenty20",
-      "description":"International Twenty20",
-      "active":true,
-      "has_outrights":false
-   },
-   {
-      "key":"cricket_odi",
-      "group":"Cricket",
-      "title":"One Day Internationals",
-      "description":"One Day Internationals",
-      "active":true,
-      "has_outrights":false
-   },
-   {
-      "key":"cricket_t20_blast",
-      "group":"Cricket",
-      "title":"T20 Blast",
-      "description":"T20 Blast",
-      "active":true,
-      "has_outrights":false
-   },
-   {
       "key":"golf_the_open_championship_winner",
       "group":"Golf",
       "title":"The Open Winner",

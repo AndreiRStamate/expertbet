@@ -1,20 +1,46 @@
-Analyze the following match and provide a detailed prediction focused on betting opportunities:
-
-Match: {team1} vs {team2}
+Match Preview & Betting Analysis Request
+Match Details:
+Match: {team1} (Home) vs {team2} (Away)
 Competition: {sport_title}
 Date & Time: {commence_time}
-
-Please consider the following:
-•	Recent form (last 5 matches)
-•	League standings
-•	Injuries/suspensions
-•	Weather forecast
-•	Referee
-•	Head-to-head record
-•	Tactical styles
-•	Odds movement if relevant
-•	Possible fatigue
-
-At the end, provide:
-•	5 likely bets with brief explanations
-•	3 high-probability bets with strong justifications
+Analysis Factors to Consider:
+Recent Form (get it from Flashscore):
+Overall form (last 5-6 matches - W/D/L, goals scored/conceded) for both teams.
+Home/Away Specific Form: Analyze {team1}'s record and performance trends at home vs {team2}'s record and performance trends away.
+League Standings & Season Context:
+Current table position, points, goal difference.
+Implications based on their standings (title race, European qualification, relegation battle).
+Match Context & Motivation:
+Significance of this specific match (derby, rivalry, cup tie, end-of-season importance).
+Assess potential motivation levels for both sides.
+Team News:
+Confirmed injuries and suspensions.
+Players doubtful or returning from absence.
+Relevant internal team news (e.g., managerial pressure, dressing room conflicts).
+Head-to-Head (H2H) Record:
+Results of recent meetings (last 3-5).
+Historical trends or patterns specific to this fixture.
+Tactical Analysis:
+Likely formations and playing styles (possession-based, counter-attack, high press, defensive approach).
+Disciplinary & Potential Faults:
+Assess teams' historical disciplinary records (cards frequency, sending-offs).
+External Factors:
+Weather Forecast: Predicted conditions (rain, wind, temperature) and potential impact.
+Referee: Assigned referee and their relevant statistics (card frequency).
+Physical Condition:
+Assess Possible Fatigue based on recent scheduling, travel, and minutes played by key players.
+Don’t use information older than 2 weeks.
+If you’re not sure of some statistic don’t include it in your calculations.
+Finally, to calculate the probability you must use these weights:
+WEIGHTS = [
+    1.0,# team_strength_diff
+    0.25,# recent_form_diff
+    0.5,# home_advantage
+    2.0,# injury_penalty
+    0.5,# fatigue_score
+    2.0,# coach_advantage
+    0.25,# head_to_head_adv
+]
+Required Output:
+Based on the comprehensive analysis above:
+Use the weights provided to calculate the win/draw/lose probability.
