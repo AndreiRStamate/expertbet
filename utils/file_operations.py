@@ -8,8 +8,8 @@ def sanitize_filename(name):
     return name.replace("/", "_").replace("\\", "_").replace(":", "_").replace("*", "_").replace("?", "_").replace("\"", "_").replace("<", "_").replace(">", "_").replace("|", "_")
 
 def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-5x3.txt"):
-    if action.lower() != "pariu sigur":
-        return
+    # if action.lower() != "pariu sigur":
+    #     return
 
     # Get the absolute path for the ponturi folder
     base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of this script

@@ -2,7 +2,13 @@
   "football": [
     "soccer_spain_la_liga",
     "soccer_epl",
-    "soccer_germany_bundesliga"
+    "soccer_germany_bundesliga",
+    "soccer_austria_bundesliga",
+    "soccer_belgium_first_div",
+    "soccer_fifa_world_cup_qualifiers_europe",
+    "soccer_france_ligue_one",
+    "soccer_italy_serie_a",
+    "soccer_uefa_champs_league_qualification"
   ],
   "basketball": [
     "basketball_nba",
