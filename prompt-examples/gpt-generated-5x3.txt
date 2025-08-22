@@ -44,3 +44,4 @@ WEIGHTS = [
 Required Output:
 Based on the comprehensive analysis above:
 Use the weights provided to calculate the win/draw/lose probability.
+Do NOT use any betting information (like odds) for the analysis. You must gather your own intel.
