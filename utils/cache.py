@@ -3,6 +3,7 @@ import json
 import datetime
 import logging
 from constants import CACHE_FOLDER
+from constants import ARCHIVE_FOLDER
 from utils.api import fetch_api_response
 
 logger = logging.getLogger(__name__)
@@ -106,22 +107,28 @@ def fetch_api_response_with_cache(league):
         return None
 
     cache_folder = os.path.join(CACHE_FOLDER, sport_folder)
+    archive_folder = os.path.join(ARCHIVE_FOLDER, sport_folder)
     os.makedirs(cache_folder, exist_ok=True)  # Ensure the sport-specific folder exists
+    os.makedirs(archive_folder, exist_ok=True)  # Ensure the sport-specific folder exists
 
     # Check cache first
     cached_data = get_cached_api_response(league)
     if cached_data:
         return cached_data
 
-    cache_file = os.path.join(cache_folder, f"api_response_{league}.json")
+    cache_file = os.path.join(archive_folder, f"api_response_{league}.json")
     # Load existing cache data
     old_data = load_json(cache_file)
 
     # Fetch new data from the API
     new_data = fetch_api_response(league, api_key)
 
-    merged_data = merge_json(old_data, new_data) if old_data else new_data
-
     # Save the new data to cache
-    save_to_cache(league, merged_data, cache_folder)
+    save_to_cache(league, new_data, cache_folder)
+
+    # Merge old and new data
+    merged_data = merge_json(old_data, new_data) if old_data else new_data
+    # Save the merged data to archive
+    save_to_cache(league, merged_data, archive_folder)
+
     return new_data

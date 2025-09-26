@@ -1,5 +1,6 @@
 OUTPUT_FILE = "output.txt"
 CACHE_FOLDER = "cache"
+ARCHIVE_FOLDER = "archive"
 CONFIG_FILE = "config.json"
 LEAGUE_NAMES = {
     "soccer_argentina_primera_division": "Argentina Primera Division",

@@ -1,0 +1,14 @@
+Also, create a json with the following format
+{
+    "date": date,
+    "competition": string,
+    "team1": string,
+    "team2": string,
+    "team_strength_diff": float,
+    "recent_form_diff": float,
+    "home_advantage": float,
+    "injury_penalty": float,
+    "fatigue_score": float,
+    "coach_advantage": float,
+    "head_to_head_adv": float
+}
