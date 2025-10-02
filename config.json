@@ -7,7 +7,9 @@
     "soccer_belgium_first_div",
     "soccer_france_ligue_one",
     "soccer_italy_serie_a",
-    "soccer_uefa_champs_league"
+    "soccer_uefa_champs_league",
+    "soccer_uefa_europa_conference_league",
+    "soccer_uefa_europa_league"
   ],
   "default_days": 1,
   "number_of_matches": -1
