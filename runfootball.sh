@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Clean up previous runs
-rm -rf ponturi
+rm -rf ponturi/football
 rm output.txt
 
 python3 main.py --football

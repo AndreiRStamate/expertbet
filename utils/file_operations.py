@@ -20,7 +20,7 @@ def create_tip_file(match, action, sport):
     template_file = get_template_from_sport(sport)
     # Get the absolute path for the ponturi folder
     base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of this script
-    ponturi_folder = os.path.join(base_dir, "..", "ponturi")  # Navigate to the parent directory and create "ponturi"
+    ponturi_folder = os.path.join(base_dir, "..", "ponturi", sport)  # Navigate to the parent directory and create "ponturi"
     os.makedirs(ponturi_folder, exist_ok=True)
 
     # Get the absolute path for the template file
