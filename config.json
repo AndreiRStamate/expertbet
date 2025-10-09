@@ -16,7 +16,8 @@
   "basketball": [
     "basketball_euroleague",
     "basketball_nba",
-    "basketball_nba_championship_winner"
+    "basketball_nba_championship_winner",
+    "basketball_nba_preseason"
   ],
   "default_days": 1,
   "number_of_matches": -1
