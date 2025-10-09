@@ -13,6 +13,11 @@
     "soccer_fifa_world_cup_qualifiers_europe",
     "soccer_uefa_champs_league_women"
   ],
+  "basketball": [
+    "basketball_euroleague",
+    "basketball_nba",
+    "basketball_nba_championship_winner"
+  ],
   "default_days": 1,
   "number_of_matches": -1
 }

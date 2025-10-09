@@ -8,3 +8,4 @@ output_matches.txt
 *.pyc
 output.txt
 filtered_output.txt
+.DS_Store

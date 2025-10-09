@@ -7,10 +7,17 @@ logger = logging.getLogger(__name__)
 def sanitize_filename(name):
     return name.replace("/", "_").replace("\\", "_").replace(":", "_").replace("*", "_").replace("?", "_").replace("\"", "_").replace("<", "_").replace(">", "_").replace("|", "_")
 
-def create_tip_file(match, action, template_file="prompt-examples/gpt-generated-5x3.txt"):
+def get_template_from_sport(sport):
+    templates = {
+        "football": "prompt-examples/gpt-generated-5x3.txt",
+        "basketball": "prompt-examples/gpt-generated-basketball.txt"
+    }
+    return templates.get(sport, "prompt-examples/gpt-generated-5x3.txt")
+
+def create_tip_file(match, action, sport):
     # if action.lower() != "pariu sigur":
     #     return
-
+    template_file = get_template_from_sport(sport)
     # Get the absolute path for the ponturi folder
     base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of this script
     ponturi_folder = os.path.join(base_dir, "..", "ponturi")  # Navigate to the parent directory and create "ponturi"

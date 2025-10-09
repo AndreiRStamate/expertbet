@@ -27,6 +27,7 @@ def main():
     config = load_config(CONFIG_FILE)
 
     # Determine which leagues to parse
+    actualSport  = "football"
     if sum([args.football, args.basketball, args.hockey]) > 1:
         logger.error("Cannot specify multiple sports at the same time.")
         return
@@ -34,8 +35,10 @@ def main():
         leagues = config.get("football", [])
     elif args.basketball:
         leagues = config.get("basketball", [])
+        actualSport = "basketball"
     elif args.hockey:
         leagues = config.get("hockey", [])
+        actualSport = "hockey"
     else:
         leagues = config.get("football", []) + config.get("basketball", []) + config.get("hockey", [])
 
@@ -72,7 +75,7 @@ def main():
     for match in predictable_matches:
         action = decide_action(match, threshold=1.0)
         print_match(match, action, OUTPUT_FILE)
-        create_tip_file(match, action)
+        create_tip_file(match, action, actualSport)
 
     with open(OUTPUT_FILE, "a") as f:
         f.write("\nSorted by time of play:\n")
