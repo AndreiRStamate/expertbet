@@ -1,14 +1,14 @@
 import logging
+import sys
 
-def setup_logging(log_file='log_file.log'):
+def setup_logging():
     """
-    Configures the logging system to write logs to a file and format them.
+    Configures logging to stdout for Fly deployments.
     """
     logging.basicConfig(
-        filename=log_file,
-        filemode='a',
         level=logging.DEBUG,
-        format='%(asctime)s - %(levelname)s - %(message)s'
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[logging.StreamHandler(sys.stdout)]
     )
     logger = logging.getLogger(__name__)
     return logger
