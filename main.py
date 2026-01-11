@@ -9,6 +9,39 @@ from utils.match_processing import compute_predictability, get_matches_sorted, d
 from utils.file_operations import create_tip_file
 from utils.cache import fetch_api_response_with_cache, get_cached_api_response
 from utils.config import load_config
+import json
+import requests
+
+def build_config_from_api(api_key: str):
+    """
+    Fetch leagues from the Odds API and generate a config.json file
+    containing only football and basketball leagues.
+    """
+    url = f"https://api.the-odds-api.com/v4/sports?apiKey={api_key}"
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        leagues = response.json()
+    except requests.RequestException as e:
+        logger.error(f"Failed to fetch leagues from API: {e}")
+        return False
+
+    config = {
+        "football": [league["key"] for league in leagues if league.get("group") == "Soccer" and league.get("active", False)],
+        "basketball": [league["key"] for league in leagues if league.get("group") == "Basketball" and league.get("active", False)],
+        "default_days": 1,
+        "number_of_matches": -1
+    }
+
+    try:
+        with open(CONFIG_FILE, "w") as f:
+            json.dump(config, f, indent=2)
+        logger.info(f"Config file created at {CONFIG_FILE}")
+        return True
+    except IOError as e:
+        logger.error(f"Failed to write config file: {e}")
+        return False
 
 logger = setup_logging()
 load_dotenv(override=True)
@@ -24,6 +57,7 @@ def main():
     parser.add_argument("--days", type=int, default=None, help="Number of days to fetch matches for.")
     args = parser.parse_args()
 
+    build_config_from_api(os.getenv("THE_ODDS_API_KEY"))
     config = load_config(CONFIG_FILE)
 
     # Determine which leagues to parse
