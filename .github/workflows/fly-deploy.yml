@@ -1,5 +1,4 @@
 name: Run Fly Worker
-
 on:
   schedule:
     - cron: '* * * * *'
@@ -9,8 +8,6 @@ jobs:
   run-worker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
       - name: Install Fly CLI
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
@@ -18,9 +15,9 @@ jobs:
           # Install Fly CLI
           curl -L https://fly.io/install.sh | sh
           export PATH="$HOME/.fly/bin:$PATH"
-
+          
           # Authenticate
           fly auth token $FLY_API_TOKEN
-
-          # Run batch worker in a temporary machine
+          
+          # Start machine
           fly machine start 7843d55c670158
