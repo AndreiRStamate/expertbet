@@ -1,1 +1,1 @@
-worker: python3 main.py --football && python3 main.py --basketball --days 2 && python3 upload.py
+worker: python3 main.py --football && python3 main.py --basketball --days 2 && python3 upload.py && sleep ${DEBUG_SLEEP_SECONDS:-0}
