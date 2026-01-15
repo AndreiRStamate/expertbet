@@ -1,7 +1,7 @@
 import json
 import logging
 import requests
-from constants import CONFIG_FILE
+from constants import CONFIG_FILE, IMPORTANT_LEAGUES
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ def build_config_from_api(api_key: str):
         return False
 
     config = {
-        "football": [league["key"] for league in leagues if league.get("group") == "Soccer" and league.get("active", False)],
+        "football": [league["key"] for league in leagues if league.get("group") == "Soccer" and league.get("active", False) and league.get("key") in IMPORTANT_LEAGUES],
         "basketball": [league["key"] for league in leagues if league.get("group") == "Basketball" and league.get("active", False)],
         "default_days": 1,
         "number_of_matches": -1

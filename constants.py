@@ -67,3 +67,17 @@ LEAGUE_NAMES = {
     "icehockey_sweden_allsvenskan": "HockeyAllsvenskan",
     "icehockey_sweden_hockey_league": "SHL"
 }
+IMPORTANT_LEAGUES = {
+    "soccer_fifa_world_cup",
+    "soccer_fifa_world_cup_qualifiers_europe",
+    "soccer_uefa_champs_league",
+    "soccer_uefa_europa_league",
+    "soccer_austria_bundesliga",
+    "soccer_belgium_first_div",
+    "soccer_epl",
+    "soccer_france_ligue_one",
+    "soccer_germany_bundesliga",
+    "soccer_italy_serie_a",
+    "soccer_spain_la_liga",
+    "soccer_switzerland_superleague"
+}
