@@ -19,7 +19,8 @@
     "basketball_nba_championship_winner",
     "basketball_nbl",
     "basketball_ncaab",
-    "basketball_ncaab_championship_winner"
+    "basketball_ncaab_championship_winner",
+    "basketball_wncaab"
   ],
   "default_days": 1,
   "number_of_matches": -1

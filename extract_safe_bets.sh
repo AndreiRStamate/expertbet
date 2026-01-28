@@ -14,6 +14,7 @@ fi
 START_LINE=$(grep -n "Sorted by" "$INPUT_FILE" | tail -1 | cut -d: -f1)
 
 # Extract from that line onward, then search for PARIU SIGUR matches
-tail -n +"$START_LINE" "$INPUT_FILE" | grep -B3 "Evaluare:.*PARIU SIGUR" | grep "Echipe:" > "$OUTPUT_FILE"
+# tail -n +"$START_LINE" "$INPUT_FILE" | grep -B3 "Evaluare:.*PARIU SIGUR" | grep "Echipe:" > "$OUTPUT_FILE"
+tail -n +"$START_LINE" "$INPUT_FILE" | grep "Echipe:" > "$OUTPUT_FILE"
 
 echo "Done. Matches saved to $OUTPUT_FILE"

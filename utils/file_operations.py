@@ -2,6 +2,8 @@ import os
 import stat
 import logging
 
+from constants import LEAGUE_NAMES
+
 logger = logging.getLogger(__name__)
 
 def sanitize_filename(name):
@@ -36,7 +38,7 @@ def create_tip_file(match, action, sport):
     filled_content = template_content.format(
         team1=match['team1'],
         team2=match['team2'],
-        sport_title=match['league'],
+        sport_title=LEAGUE_NAMES[match['league']] if match['league'] in LEAGUE_NAMES else match['league'],
         commence_time=match['commence_time']
     )
 
