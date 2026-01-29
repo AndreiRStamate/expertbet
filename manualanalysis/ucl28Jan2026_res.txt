@@ -1,0 +1,18 @@
+|Echipe:                         Ajax vs Olympiakos Piraeus| 2
+|Echipe:                               Arsenal vs FC Kairat| 1
+|Echipe:                              AS Monaco vs Juventus| x
+|Echipe:                 Athletic Bilbao vs Sporting Lisbon| 2
+|Echipe:                      Atlético Madrid vs Bodø/Glimt| 2
+|Echipe:                         Barcelona vs FC Copenhagen| 1
+|Echipe:                     Bayer Leverkusen vs Villarreal| 1
+|Echipe:                             Benfica vs Real Madrid| 1
+|Echipe:                   Borussia Dortmund vs Inter Milan| 2
+|Echipe:                           Club Brugge vs Marseille| 1
+|Echipe:             Eintracht Frankfurt vs Tottenham Ho...| 2
+|Echipe:                            Liverpool vs Qarabağ FK| 1
+|Echipe:                     Manchester City vs Galatasaray| 1
+|Echipe:                                  Napoli vs Chelsea| 2
+|Echipe:                           Pafos FC vs Slavia Praha| 1
+|Echipe:             Paris Saint Germain vs Newcastle Un...| x
+|Echipe:                     PSV Eindhoven vs Bayern Munich| 2
+|Echipe:                Union Saint-Gilloise vs Atalanta BC| 1
