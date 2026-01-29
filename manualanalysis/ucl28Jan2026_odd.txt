@@ -1,0 +1,18 @@
+|Echipe:                         Ajax vs Olympiakos Piraeus|  3.15 -  3.50 -  2.25
+|Echipe:                               Arsenal vs FC Kairat|  1.05 - 16.00 - 30.00
+|Echipe:                              AS Monaco vs Juventus|  4.10 -  3.50 -  1.92
+|Echipe:                 Athletic Bilbao vs Sporting Lisbon|  2.95 -  3.25 -  2.47
+|Echipe:                      Atlético Madrid vs Bodø/Glimt|  1.28 -  6.50 -  8.30
+|Echipe:                         Barcelona vs FC Copenhagen|  1.11 - 11.00 - 17.00
+|Echipe:                     Bayer Leverkusen vs Villarreal|  1.65 -  4.10 -  5.00
+|Echipe:                             Benfica vs Real Madrid|  4.10 -  4.10 -  1.78
+|Echipe:                   Borussia Dortmund vs Inter Milan|  2.95 -  3.45 -  2.37
+|Echipe:                           Club Brugge vs Marseille|  2.65 -  3.55 -  2.52
+|Echipe:             Eintracht Frankfurt vs Tottenham Ho...|  4.85 -  4.10 -  1.67
+|Echipe:                            Liverpool vs Qarabağ FK|  1.10 - 10.00 - 20.00
+|Echipe:                     Manchester City vs Galatasaray|  1.25 -  6.90 -  8.90
+|Echipe:                                  Napoli vs Chelsea|  3.55 -  3.50 -  2.07
+|Echipe:                           Pafos FC vs Slavia Praha|  3.10 -  3.50 -  2.25
+|Echipe:             Paris Saint Germain vs Newcastle Un...|  1.49 -  4.90 -  5.55
+|Echipe:                     PSV Eindhoven vs Bayern Munich|  5.00 -  4.50 -  1.59
+|Echipe:                Union Saint-Gilloise vs Atalanta BC|  3.10 -  3.45 -  2.30

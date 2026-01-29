@@ -1,0 +1,18 @@
+|Echipe:                         Ajax vs Olympiakos Piraeus| 17.0% - 30.0% - 53.0% OK
+|Echipe:                               Arsenal vs FC Kairat| 80.9% - 15.9% -  3.1% OK
+|Echipe:                              AS Monaco vs Juventus|  6.8% - 24.6% - 68.7% BAD
+|Echipe:                 Athletic Bilbao vs Sporting Lisbon| 20.2% - 23.1% - 56.7% OK
+|Echipe:                      Atlético Madrid vs Bodø/Glimt| 49.0% - 31.0% - 20.0% BAD
+|Echipe:                         Barcelona vs FC Copenhagen| 53.2% - 29.9% - 16.8% OK
+|Echipe:                     Bayer Leverkusen vs Villarreal| 30.7% - 25.0% - 44.3% BAD
+|Echipe:                             Benfica vs Real Madrid|  8.1% - 23.5% - 68.4% BAD
+|Echipe:                   Borussia Dortmund vs Inter Milan| 20.9% - 31.5% - 47.6% OK
+|Echipe:                           Club Brugge vs Marseille|  2.9% - 15.3% - 81.8% BAD
+|Echipe:             Eintracht Frankfurt vs Tottenham Ho...| 23.7% - 27.8% - 48.6% OK
+|Echipe:                            Liverpool vs Qarabağ FK| 76.8% - 16.6% -  6.6% OK
+|Echipe:                     Manchester City vs Galatasaray| 63.4% - 25.9% - 10.6% OK
+|Echipe:                                  Napoli vs Chelsea| 18.2% - 22.1% - 59.7% OK
+|Echipe:                           Pafos FC vs Slavia Praha| 57.2% - 22.8% - 20.0% OK
+|Echipe:             Paris Saint Germain vs Newcastle Un...| 65.7% - 24.3% - 10.0% BAD
+|Echipe:                     PSV Eindhoven vs Bayern Munich| 26.0% - 29.9% - 44.0% OK
+|Echipe:                Union Saint-Gilloise vs Atalanta BC| 33.5% - 31.7% - 34.8% BAD
