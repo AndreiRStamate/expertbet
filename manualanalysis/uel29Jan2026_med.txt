@@ -1,0 +1,18 @@
+|Echipe:                            Real Betis vs Feyenoord| 42.6% - 32.6% - 24.9%
+|Echipe:                        VfB Stuttgart vs Young Boys| 71.3% - 17.2% - 11.6%
+|Echipe:                          SK Sturm Graz vs SK Brann| 46.7% - 26.8% - 26.6%
+|Echipe:                        Panathinaikos FC vs AS Roma| 29.1% - 26.7% - 44.3%
+|Echipe:                Nottingham Forest vs Ferencváros TC| 15.5% - 21.5% - 63.0%
+|Echipe:                    FC Midtjylland vs Dinamo Zagreb| 42.3% - 30.2% - 27.6%
+|Echipe:                        Maccabi Tel Aviv vs Bologna| 15.3% - 23.8% - 61.0%
+|Echipe:                                       Lyon vs PAOK| 45.9% - 26.2% - 28.0%
+|Echipe:                     PFC Ludogorets Razgrad vs Nice| 79.3% - 11.5% -  9.3%
+|Echipe:                               Lille vs SC Freiburg| 12.3% - 24.7% - 63.0%
+|Echipe:                               KRC Genk vs Malmo FF| 88.0% -  6.2% -  5.8%
+|Echipe:                        Go Ahead Eagles vs SC Braga| 25.3% - 26.8% - 47.9%
+|Echipe:                                 FCSB vs Fenerbahce| 18.7% - 21.3% - 60.1%
+|Echipe:                                Porto vs Rangers FC| 65.0% - 18.1% - 17.0%
+|Echipe:                    Red Star Belgrade vs Celta Vigo| 70.2% - 14.0% - 15.9%
+|Echipe:                               Celtic vs FC Utrecht| 52.6% - 28.7% - 18.8%
+|Echipe:                         FC Basel vs Viktoria Plzeň| 16.3% - 29.3% - 54.4%
+|Echipe:                            Aston Villa vs Salzburg| 67.1% - 15.2% - 17.8%
