@@ -15,6 +15,18 @@ START_LINE=$(grep -n "Sorted by" "$INPUT_FILE" | tail -1 | cut -d: -f1)
 
 # Extract from that line onward, then search for PARIU SIGUR matches
 # tail -n +"$START_LINE" "$INPUT_FILE" | grep -B3 "Evaluare:.*PARIU SIGUR" | grep "Echipe:" > "$OUTPUT_FILE"
-tail -n +"$START_LINE" "$INPUT_FILE" | grep "Echipe:" > "$OUTPUT_FILE"
+tail -n +"$START_LINE" "$INPUT_FILE" \
+  | grep "Echipe:" \
+  | awk -F'Echipe:[[:space:]]*| vs ' '{print $2 "|" $0}' \
+  | sort -f \
+  | cut -d'|' -f2- > "$OUTPUT_FILE"
+
+TODAY=$(date +%Y%m%d)
+mkdir -p manualanalysis
+cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_gpt.txt"
+cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_grok.txt"
+cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_med.txt"
+cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_odd.txt"
+cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_res.txt"
 
 echo "Done. Matches saved to $OUTPUT_FILE"
