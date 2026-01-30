@@ -1,18 +1,18 @@
-|Echipe:                            Real Betis vs Feyenoord|
-|Echipe:                        VfB Stuttgart vs Young Boys|
-|Echipe:                          SK Sturm Graz vs SK Brann|
-|Echipe:                        Panathinaikos FC vs AS Roma|
-|Echipe:                Nottingham Forest vs Ferencváros TC|
-|Echipe:                    FC Midtjylland vs Dinamo Zagreb|
-|Echipe:                        Maccabi Tel Aviv vs Bologna|
-|Echipe:                                       Lyon vs PAOK|
-|Echipe:                     PFC Ludogorets Razgrad vs Nice|
-|Echipe:                               Lille vs SC Freiburg|
-|Echipe:                               KRC Genk vs Malmo FF|
-|Echipe:                        Go Ahead Eagles vs SC Braga|
-|Echipe:                                 FCSB vs Fenerbahce|
-|Echipe:                                Porto vs Rangers FC|
-|Echipe:                    Red Star Belgrade vs Celta Vigo|
-|Echipe:                               Celtic vs FC Utrecht|
-|Echipe:                         FC Basel vs Viktoria Plzeň|
-|Echipe:                            Aston Villa vs Salzburg|
+|Echipe:                            Real Betis vs Feyenoord| 1
+|Echipe:                        VfB Stuttgart vs Young Boys| 1
+|Echipe:                          SK Sturm Graz vs SK Brann| 1
+|Echipe:                        Panathinaikos FC vs AS Roma| x
+|Echipe:                Nottingham Forest vs Ferencváros TC| 1
+|Echipe:                    FC Midtjylland vs Dinamo Zagreb| 1
+|Echipe:                        Maccabi Tel Aviv vs Bologna| 2
+|Echipe:                                       Lyon vs PAOK| 1
+|Echipe:                     PFC Ludogorets Razgrad vs Nice| 1
+|Echipe:                               Lille vs SC Freiburg| 1
+|Echipe:                               KRC Genk vs Malmo FF| 1
+|Echipe:                        Go Ahead Eagles vs SC Braga| x
+|Echipe:                                 FCSB vs Fenerbahce| x
+|Echipe:                                Porto vs Rangers FC| 1
+|Echipe:                    Red Star Belgrade vs Celta Vigo| x
+|Echipe:                               Celtic vs FC Utrecht| 1
+|Echipe:                         FC Basel vs Viktoria Plzeň| 2
+|Echipe:                            Aston Villa vs Salzburg| 1

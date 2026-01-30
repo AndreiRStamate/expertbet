@@ -16,3 +16,6 @@
 |Echipe:             Paris Saint Germain vs Newcastle Un...| 1 -> 72.3% BAD
 |Echipe:                     PSV Eindhoven vs Bayern Munich| 2 -> 36.7% OK
 |Echipe:                Union Saint-Gilloise vs Atalanta BC| 2 -> 40.3% BAD
+
+   ALL ROI +20%
+>= 5pp ROI +41%
