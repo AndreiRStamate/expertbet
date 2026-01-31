@@ -1,5 +1,5 @@
-|Echipe:                        1. FC Köln vs VfL Wolfsburg|
-|Echipe:                                 Espanyol vs Alavés|
-|Echipe:                                     Lazio vs Genoa|
-|Echipe:                           RAAL La Louvière vs Gent|
-|Echipe:                                RC Lens vs Le Havre|
+|Echipe:                        1. FC Köln vs VfL Wolfsburg| 1
+|Echipe:                                 Espanyol vs Alavés| 2
+|Echipe:                                     Lazio vs Genoa| 1
+|Echipe:                           RAAL La Louvière vs Gent| x
+|Echipe:                                RC Lens vs Le Havre| 1
