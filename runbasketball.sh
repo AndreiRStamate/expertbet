@@ -6,4 +6,4 @@ rm output.txt
 
 python3 main.py --basketball --days 2
 
-./extract_safe_bets.sh output.txt filtered_basketball_output.txt
+./extract_safe_bets.sh output.txt filtered_basketball_output.txt basketball

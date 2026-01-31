@@ -9,7 +9,9 @@
     "soccer_germany_bundesliga",
     "soccer_italy_serie_a",
     "soccer_spain_la_liga",
-    "soccer_switzerland_superleague"
+    "soccer_switzerland_superleague",
+    "soccer_uefa_champs_league",
+    "soccer_uefa_europa_league"
   ],
   "basketball": [
     "basketball_euroleague",

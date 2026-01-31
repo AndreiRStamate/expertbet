@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# Usage: ./extract_safe_bets.sh input.txt [output.txt]
+# Usage: ./extract_safe_bets.sh input.txt [output.txt] [football|basketball]
 
 INPUT_FILE="$1"
 OUTPUT_FILE="${2:-filtered_output.txt}"
+SPORT="${3:-football}"
 
 if [[ -z "$INPUT_FILE" ]]; then
   echo "Usage: $0 input.txt [output.txt]"
@@ -23,10 +24,10 @@ tail -n +"$START_LINE" "$INPUT_FILE" \
 
 TODAY=$(date +%Y%m%d)
 mkdir -p manualanalysis
-cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_gpt.txt"
-cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_grok.txt"
-cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_med.txt"
-cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_odd.txt"
-cp "$OUTPUT_FILE" "manualanalysis/football${TODAY}_res.txt"
+cp "$OUTPUT_FILE" "manualanalysis/${SPORT}${TODAY}_gpt.txt"
+cp "$OUTPUT_FILE" "manualanalysis/${SPORT}${TODAY}_grok.txt"
+cp "$OUTPUT_FILE" "manualanalysis/${SPORT}${TODAY}_med.txt"
+cp "$OUTPUT_FILE" "manualanalysis/${SPORT}${TODAY}_odd.txt"
+cp "$OUTPUT_FILE" "manualanalysis/${SPORT}${TODAY}_res.txt"
 
 echo "Done. Matches saved to $OUTPUT_FILE"
