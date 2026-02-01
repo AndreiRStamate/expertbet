@@ -13,14 +13,6 @@
     "soccer_uefa_champs_league",
     "soccer_uefa_europa_league"
   ],
-  "basketball": [
-    "basketball_euroleague",
-    "basketball_nba",
-    "basketball_nba_championship_winner",
-    "basketball_nbl",
-    "basketball_ncaab",
-    "basketball_ncaab_championship_winner"
-  ],
   "default_days": 1,
   "number_of_matches": -1
 }

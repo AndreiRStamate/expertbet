@@ -22,7 +22,7 @@ def build_config_from_api(api_key: str):
 
     config = {
         "football": [league["key"] for league in leagues if league.get("group") == "Soccer" and league.get("active", False) and league.get("key") in IMPORTANT_LEAGUES],
-        "basketball": [league["key"] for league in leagues if league.get("group") == "Basketball" and league.get("active", False)],
+        # "basketball": [league["key"] for league in leagues if league.get("group") == "Basketball" and league.get("active", False)],
         "default_days": 1,
         "number_of_matches": -1
     }
