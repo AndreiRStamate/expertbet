@@ -2,6 +2,7 @@ OUTPUT_FILE = "output.txt"
 CACHE_FOLDER = "data/cache"
 ARCHIVE_FOLDER = "data/archive"
 CONFIG_FILE = "config.json"
+ALL_POSSIBLE_LEAGUES_FILE = "all_possible_leagues.json"
 LEAGUE_NAMES = {
     "soccer_africa_cup_of_nations": "Africa Cup of Nations",
     "soccer_argentina_primera_division": "Argentina Primera Division",

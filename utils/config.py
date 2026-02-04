@@ -1,7 +1,7 @@
 import json
 import logging
 import requests
-from constants import CONFIG_FILE, IMPORTANT_LEAGUES
+from constants import CONFIG_FILE, IMPORTANT_LEAGUES, ALL_POSSIBLE_LEAGUES_FILE
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,14 @@ def build_config_from_api(api_key: str):
     except requests.RequestException as e:
         logger.error(f"Failed to fetch leagues from API: {e}")
         return False
+
+    try:
+        with open(ALL_POSSIBLE_LEAGUES_FILE, "w") as f:
+            json.dump(leagues, f, indent=2)
+        logger.info(f"All possible leagues saved to {ALL_POSSIBLE_LEAGUES_FILE}")
+    except IOError as e:
+        logger.error(f"Failed to write all possible leagues file: {e}")
+
 
     config = {
         "football": [league["key"] for league in leagues if league.get("group") == "Soccer" and league.get("active", False) and league.get("key") in IMPORTANT_LEAGUES],
