@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Usage: ./extract_safe_bets.sh input.txt [output.txt] [football|basketball]
+# Usage: ./extract_safe_bets.sh input.txt [output.txt] [football|basketball] [manualanalysis]
 
 INPUT_FILE="$1"
 OUTPUT_FILE="${2:-filtered_output.txt}"
 SPORT="${3:-football}"
+MANUAL_ANALYSIS="$4"
 
 if [[ -z "$INPUT_FILE" ]]; then
   echo "Usage: $0 input.txt [output.txt]"
@@ -21,6 +22,10 @@ tail -n +"$START_LINE" "$INPUT_FILE" \
   | awk -F'Echipe:[[:space:]]*| vs ' '{print $2 "|" $0}' \
   | sort -f \
   | cut -d'|' -f2- > "$OUTPUT_FILE"
+
+if [[ -z "$MANUAL_ANALYSIS" ]]; then
+  exit 1
+fi
 
 TODAY=$(date +%Y%m%d)
 mkdir -p manualanalysis
