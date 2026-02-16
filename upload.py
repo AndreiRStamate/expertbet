@@ -15,5 +15,4 @@ def upload(folder, url):
                     files={"file": f},
                 )
 
-upload("data/cache/football", "https://small-artifactory.fly.dev/football/upload")
-# upload("data/cache/basketball", "https://small-artifactory.fly.dev/basketball/upload")
+upload("data/compact_cache/football", "https://small-artifactory.fly.dev/football/v2/upload")

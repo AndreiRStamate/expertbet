@@ -23,16 +23,12 @@ def get_matches_for_days(nr_zile=1, leagues=None, get_api_data=None, get_cached_
             continue
 
         for match in data:
-            teams = match.get("teams")
-            if not teams:
-                team1 = match.get("home_team")
-                team2 = match.get("away_team")
-                if not team1 or not team2:
-                    logger.warning("Match ignored; missing team information: %s", match)
-                    continue
-            else:
-                team1, team2 = teams[0], teams[1]
-            
+            team1 = match.get("home_team")
+            team2 = match.get("away_team")
+            if not team1 or not team2:
+                logger.warning("Match ignored; missing team information: %s", match)
+                continue
+
             try:
                 commence_time = datetime.datetime.fromisoformat(match['commence_time'].replace("Z", "+00:00")).date()
             except Exception as e:
@@ -40,33 +36,27 @@ def get_matches_for_days(nr_zile=1, leagues=None, get_api_data=None, get_cached_
                 continue
 
             if today <= commence_time < end_date:
-                odds_team1 = []
-                odds_team2 = []
-                for bookmaker in match.get("bookmakers", []):
-                    for market in bookmaker.get("markets", []):
-                        if market.get("key") == "h2h":
-                            for outcome in market.get("outcomes", []):
-                                if outcome.get("name") == team1:
-                                    odds_team1.append(outcome.get("price"))
-                                elif outcome.get("name") == team2:
-                                    odds_team2.append(outcome.get("price"))
-                if odds_team1 and odds_team2:
-                    best_odds_team1 = min(odds_team1)
-                    best_odds_team2 = min(odds_team2)
-                    match_entry = {
-                        "league": league,
-                        "team1": team1,
-                        "team2": team2,
-                        "odds": {
-                            team1: best_odds_team1,
-                            team2: best_odds_team2
-                        },
-                        "commence_time": match["commence_time"]
-                    }
-                    combined_matches.append(match_entry)
-                    logger.debug("Match added: %s", match_entry)
-                else:
-                    logger.warning("Match ignored; incomplete odds for: %s vs %s", team1, team2)
+                odds_home = match.get("odds_home")
+                odds_away = match.get("odds_away")
+                odds_draw = match.get("odds_draw")
+
+                if not (isinstance(odds_home, (int, float)) and isinstance(odds_away, (int, float)) and isinstance(odds_draw, (int, float))):
+                    logger.warning("Match ignored; missing compact odds for: %s vs %s", team1, team2)
+                    continue
+
+                match_entry = {
+                    "league": league,
+                    "team1": team1,
+                    "team2": team2,
+                    "odds": {
+                        team1: float(odds_home),
+                        team2: float(odds_away),
+                        "Draw": float(odds_draw)
+                    },
+                    "commence_time": match["commence_time"]
+                }
+                combined_matches.append(match_entry)
+                logger.debug("Match added: %s", match_entry)
     for match in combined_matches:
         match['predictability'] = compute_predictability(match)
     return combined_matches
