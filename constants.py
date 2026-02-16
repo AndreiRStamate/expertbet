@@ -1,6 +1,6 @@
 OUTPUT_FILE = "output.txt"
-CACHE_FOLDER = "data/cache"
-ARCHIVE_FOLDER = "data/archive"
+CACHE_FOLDER = "data/compact_cache"
+ARCHIVE_FOLDER = "data/compact_archive"
 CONFIG_FILE = "config.json"
 ALL_POSSIBLE_LEAGUES_FILE = "all_possible_leagues.json"
 LEAGUE_NAMES = {

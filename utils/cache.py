@@ -5,6 +5,7 @@ import logging
 from constants import CACHE_FOLDER
 from constants import ARCHIVE_FOLDER
 from utils.api import fetch_api_response
+from utils.transform import to_compact_matches
 
 logger = logging.getLogger(__name__)
 
@@ -120,15 +121,18 @@ def fetch_api_response_with_cache(league):
     # Load existing cache data
     old_data = load_json(cache_file)
 
-    # Fetch new data from the API
-    new_data = fetch_api_response(league, api_key)
+    # Fetch raw data from the API
+    raw_data = fetch_api_response(league, api_key)
 
-    # Save the new data to cache
+    # Transform raw → compact
+    new_data = to_compact_matches(raw_data)
+
+    # Save the compact data to cache
     save_to_cache(league, new_data, cache_folder)
 
-    # Merge old and new data
+    # Merge old and new compact data
     merged_data = merge_json(old_data, new_data) if old_data else new_data
-    # Save the merged data to archive
+    # Save the merged compact data to archive
     save_to_cache(league, merged_data, archive_folder)
 
     return new_data
