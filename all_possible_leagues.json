@@ -8,6 +8,14 @@
     "has_outrights": false
   },
   {
+    "key": "americanfootball_nfl_super_bowl_winner",
+    "group": "American Football",
+    "title": "NFL Super Bowl Winner",
+    "description": "Super Bowl Winner 2025/2026",
+    "active": true,
+    "has_outrights": true
+  },
+  {
     "key": "aussierules_afl",
     "group": "Aussie Rules",
     "title": "AFL",
@@ -24,10 +32,10 @@
     "has_outrights": true
   },
   {
-    "key": "basketball_euroleague",
-    "group": "Basketball",
-    "title": "Basketball Euroleague",
-    "description": "Basketball Euroleague",
+    "key": "baseball_ncaa",
+    "group": "Baseball",
+    "title": "NCAA Baseball",
+    "description": "US College Baseball",
     "active": true,
     "has_outrights": false
   },
@@ -118,6 +126,14 @@
     "description": "2026 Winner",
     "active": true,
     "has_outrights": true
+  },
+  {
+    "key": "handball_germany_bundesliga",
+    "group": "Handball",
+    "title": "Handball-Bundesliga",
+    "description": "German HBL",
+    "active": true,
+    "has_outrights": false
   },
   {
     "key": "icehockey_ahl",
@@ -400,6 +416,14 @@
     "has_outrights": false
   },
   {
+    "key": "soccer_germany_bundesliga_women",
+    "group": "Soccer",
+    "title": "Frauen-Bundesliga",
+    "description": "German Soccer",
+    "active": true,
+    "has_outrights": false
+  },
+  {
     "key": "soccer_germany_liga3",
     "group": "Soccer",
     "title": "3. Liga - Germany",
@@ -484,6 +508,22 @@
     "group": "Soccer",
     "title": "Premier League - Russia",
     "description": "Russian Soccer",
+    "active": true,
+    "has_outrights": false
+  },
+  {
+    "key": "soccer_saudi_arabia_pro_league",
+    "group": "Soccer",
+    "title": "Saudi Pro League",
+    "description": "Saudi Soccer",
+    "active": true,
+    "has_outrights": false
+  },
+  {
+    "key": "soccer_spain_copa_del_rey",
+    "group": "Soccer",
+    "title": "Copa del Rey",
+    "description": "Spanish Soccer",
     "active": true,
     "has_outrights": false
   },
@@ -576,9 +616,17 @@
     "has_outrights": false
   },
   {
-    "key": "tennis_wta_qatar_open",
+    "key": "tennis_atp_qatar_open",
     "group": "Tennis",
-    "title": "WTA Qatar Open",
+    "title": "ATP Qatar Open",
+    "description": "Men's Singles",
+    "active": true,
+    "has_outrights": false
+  },
+  {
+    "key": "tennis_wta_dubai",
+    "group": "Tennis",
+    "title": "WTA Dubai Championships",
     "description": "Women's Singles",
     "active": true,
     "has_outrights": false
