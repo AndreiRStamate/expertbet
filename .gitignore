@@ -10,3 +10,4 @@ output.txt
 filtered_*_output.txt
 .DS_Store
 fly.toml
+all_possible_leagues.json

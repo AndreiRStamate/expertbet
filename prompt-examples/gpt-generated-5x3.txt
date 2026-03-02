@@ -4,7 +4,7 @@ Match: {team1} (Home) vs {team2} (Away)
 Competition: {sport_title}
 Date & Time: {commence_time}
 Analysis Factors to Consider:
-Recent Form (get it from Flashscore):
+Recent Form:
 Overall form (last 5-6 matches - W/D/L, goals scored/conceded) for both teams.
 Home/Away Specific Form: Analyze {team1}'s record and performance trends at home vs {team2}'s record and performance trends away.
 League Standings & Season Context:

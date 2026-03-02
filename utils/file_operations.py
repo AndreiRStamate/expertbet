@@ -17,8 +17,8 @@ def get_template_from_sport(sport):
     return templates.get(sport, "prompt-examples/gpt-generated-5x3.txt")
 
 def create_tip_file(match, action, sport):
-    # if action.lower() != "pariu sigur":
-    #     return
+    if action.lower() != "pariu sigur":
+        return
     template_file = get_template_from_sport(sport)
     # Get the absolute path for the ponturi folder
     base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of this script
